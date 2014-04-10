@@ -77,7 +77,7 @@
 
     <properties>
         <com.tinkerpop.blueprints_version>2.5.0-SNAPSHOT</com.tinkerpop.blueprints_version>
-        <com.buschmais.xo_version>0.3.0-SNAPSHOT</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.4.0-SNAPSHOT</com.buschmais.xo_version>
     </properties>
 
 </project>
