@@ -62,7 +62,7 @@ public abstract class AbstractXOManagerTest extends com.buschmais.xo.test.Abstra
 
         final Properties neo4j = new Properties();
         neo4j.setProperty("blueprints.graph", "com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph");
-        neo4j.setProperty("blueprints.neo4j.directory", "memory:neo4j");
+        neo4j.setProperty("blueprints.neo4j.directory", "neo4j");
         blueprints.add(neo4j);
 
         return blueprints;
