@@ -16,6 +16,59 @@
         <url>http://www.smb-tec.com</url>
     </organization>
 
+    <developers>
+        <developer>
+            <organization>SMB GmbH</organization>
+            <name>Lars Martin</name>
+            <email>lars.martin@smb-tec.com</email>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <organization>PureSol Technologies</organization>
+            <name>Rick-Rainer Ludwig</name>
+            <email>ludwig@puresol-technologies.com</email>
+        </contributor>
+    </contributors>
+
+    <scm>
+        <connection>scm:git:git@github.com:BluWings/xo-tinkerpop-blueprints.git</connection>
+        <url>git@github.com:BluWings/xo-tinkerpop-blueprints.git</url>
+        <developerConnection>scm:git:git@github.com:BluWings/xo-tinkerpop-blueprints.git</developerConnection>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration combine.children="append">
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>com.buschmais.xo</groupId>
@@ -92,11 +145,20 @@
         </repository>
     </repositories>
 
+    <name>eXtended Objects - TinkerPop Blueprints Binding</name>
+    <url>http://www.github.com/BluWings/xo-tinkerpop-blueprints</url>
+    <inceptionYear>2014</inceptionYear>
+
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <com.tinkerpop.blueprints_version>2.5.0-SNAPSHOT</com.tinkerpop.blueprints_version>
         <com.buschmais.xo_version>0.4.0-SNAPSHOT</com.buschmais.xo_version>
     </properties>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/BluWings/xo-tinkerpop-blueprints/issues</url>
+    </issueManagement>
 
 </project>
