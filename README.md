@@ -1,7 +1,7 @@
 xo-tinkerpop-blueprints
 =======================
 
-TinkerPop Blueprints binding for eXtendend Objects (XO).
+[TinkerPop Blueprints](https://github.com/tinkerpop/blueprints/wiki) binding for [eXtendend Objects (XO)](https://github.com/buschmais/extended-objects).
 
 Maven Users
 -----------
@@ -12,8 +12,8 @@ You'll need to add the following dependency in your builds (and Maven will autom
 
 	<dependency>
 	  	<groupId>com.smb-tec.xo</groupId>
-  		<artifactId>xo-tinkerpop-blueprints</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
+	  	<artifactId>xo-tinkerpop-blueprints</artifactId>
+	  	<version>0.0.1</version>
 	</dependency>
 	
 There are a lot of different Blueprints-enabled graph backends. See the [TinkerPop Blueprints Wiki](https://github.com/tinkerpop/blueprints/wiki) for a (more or less) complete list of implementations. Note that you have to add a dependency to the Blueprints-enabled graph backend of your choice to your applications ``pom.xml``.
@@ -26,7 +26,7 @@ Please visit the project wiki for the latest information : [https://github.com/B
 License
 -------
 
-xo-tinkerpop-blueprints is contributed under Apache License 2.0.
+``xo-tinkerpop-blueprints`` is contributed under Apache License 2.0.
 
 Build
 -----
