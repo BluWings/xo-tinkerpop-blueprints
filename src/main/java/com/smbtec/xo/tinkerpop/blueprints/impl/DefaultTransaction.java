@@ -6,7 +6,7 @@ import com.buschmais.xo.spi.datastore.DatastoreTransaction;
 /**
  *
  * @author Lars Martin - lars.martin@smb-tec.com
- * @@author Dirk Mahler
+ * @author Dirk Mahler
  *
  */
 public class DefaultTransaction implements DatastoreTransaction {
