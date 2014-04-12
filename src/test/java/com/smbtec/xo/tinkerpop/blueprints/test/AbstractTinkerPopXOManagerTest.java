@@ -16,9 +16,9 @@ import com.buschmais.xo.api.ValidationMode;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopXOProvider;
 
-public abstract class AbstractXOManagerTest extends com.buschmais.xo.test.AbstractXOManagerTest {
+public abstract class AbstractTinkerPopXOManagerTest extends com.buschmais.xo.test.AbstractXOManagerTest {
 
-    protected AbstractXOManagerTest(final XOUnit xoUnit) {
+    protected AbstractTinkerPopXOManagerTest(final XOUnit xoUnit) {
         super(xoUnit);
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractXOManagerTest extends com.buschmais.xo.test.Abstra
 
         final Properties neo4j = new Properties();
         neo4j.setProperty("blueprints.graph", "com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph");
-        neo4j.setProperty("blueprints.neo4j.directory", "neo4j");
+        neo4j.setProperty("blueprints.neo4j.directory", "target/neo4j");
         blueprints.add(neo4j);
 
         return blueprints;

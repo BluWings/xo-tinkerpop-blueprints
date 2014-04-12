@@ -2,7 +2,7 @@ package com.smbtec.xo.tinkerpop.blueprints.test.demo;
 
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
-import com.smbtec.xo.tinkerpop.blueprints.test.AbstractXOManagerTest;
+import com.smbtec.xo.tinkerpop.blueprints.test.AbstractTinkerPopXOManagerTest;
 import com.smbtec.xo.tinkerpop.blueprints.test.demo.composite.Group;
 import com.smbtec.xo.tinkerpop.blueprints.test.demo.composite.Person;
 
@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class IndexedDemoTest extends AbstractXOManagerTest {
+public class IndexedDemoTest extends AbstractTinkerPopXOManagerTest {
 
     public IndexedDemoTest(final XOUnit xoUnit) {
         super(xoUnit);

@@ -14,10 +14,10 @@ import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Indexed;
 import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Vertex;
-import com.smbtec.xo.tinkerpop.blueprints.test.AbstractXOManagerTest;
+import com.smbtec.xo.tinkerpop.blueprints.test.AbstractTinkerPopXOManagerTest;
 
 @RunWith(Parameterized.class)
-public class CrudTest extends AbstractXOManagerTest {
+public class CrudTest extends AbstractTinkerPopXOManagerTest {
 
     public CrudTest(final XOUnit xoUnit) {
         super(xoUnit);
