@@ -144,6 +144,9 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>@{version}</tagNameFormat>
+                    <useReleaseProfile>true</useReleaseProfile>
+                    <goals>deploy</goals>
+                    <arguments>-DskipTests -Psonatype-oss-release</arguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -234,6 +237,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>5.1.0.Final</version>
@@ -257,5 +266,28 @@
         <system>GitHub Issues</system>
         <url>https://github.com/BluWings/xo-tinkerpop-blueprints/issues</url>
     </issueManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
