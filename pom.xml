@@ -13,7 +13,7 @@
 
     <organization>
         <name>SMB GmbH</name>
-        <url>http://www.smb-tec.com</url>
+        <url>http://www.smb-tec.com/en</url>
     </organization>
 
     <developers>
@@ -23,6 +23,15 @@
             <email>lars.martin@smb-tec.com</email>
         </developer>
     </developers>
+    
+    <repositories>
+        <repository>
+            <id>sonatype-oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
 
     <contributors>
         <contributor>
