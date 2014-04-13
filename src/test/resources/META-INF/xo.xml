@@ -1,0 +1,13 @@
+<v1:xo version="1.0" xmlns:v1="http://buschmais.com/xo/schema/v1.0">
+	<xo-unit name="TinkerGraph">
+		<description>This is a test unit for TinkerGraph.</description>
+		<url>blueprints:tinkergraph</url>
+		<provider>com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopXOProvider</provider>
+		<types>
+			<type>com.smbtec.xo.tinkerpop.blueprints.test.bootstrap.composite.A</type>
+		</types>
+		<properties>
+            <property name="blueprints.graph" value="com.tinkerpop.blueprints.impls.tg.TinkerGraph"/>
+        </properties>
+	</xo-unit>
+</v1:xo>
