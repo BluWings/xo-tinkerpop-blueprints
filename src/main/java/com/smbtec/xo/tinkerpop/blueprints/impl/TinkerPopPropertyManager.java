@@ -110,6 +110,7 @@ public class TinkerPopPropertyManager implements DatastorePropertyManager<Vertex
 
     @Override
     public Iterable<Edge> getRelations(final Vertex source, final RelationTypeMetadata<EdgeMetadata> metadata, final RelationTypeMetadata.Direction direction) {
+        final String label = metadata.getDatastoreMetadata().getDiscriminator();
         VertexQuery query = source.query();
         switch (direction) {
             case TO:
@@ -121,7 +122,7 @@ public class TinkerPopPropertyManager implements DatastorePropertyManager<Vertex
             default:
                 throw new XOException("Unknown direction '" + direction.name() + "'.");
         }
-        return query.edges();
+        return query.labels(label).edges();
     }
 
     @Override
