@@ -2,7 +2,7 @@ package com.smbtec.xo.tinkerpop.blueprints.impl;
 
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.spi.datastore.DatastoreTransaction;
-import com.tinkerpop.blueprints.TransactionalGraph;
+import com.tinkerpop.blueprints.Graph;
 
 /**
  *
@@ -14,9 +14,9 @@ public class TinkerPopTransaction implements DatastoreTransaction {
 
     private boolean active = false;
 
-    private final TransactionalGraph graph;
+    private final Graph graph;
 
-    public TinkerPopTransaction(final TransactionalGraph graph) {
+    public TinkerPopTransaction(final Graph graph) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph must not be null");
         }
@@ -34,13 +34,13 @@ public class TinkerPopTransaction implements DatastoreTransaction {
     @Override
     public void commit() {
         active = false;
-        graph.commit();
+        graph.tx().commit();
     }
 
     @Override
     public void rollback() {
         active = false;
-        graph.rollback();
+        graph.tx().rollback();
     }
 
     @Override

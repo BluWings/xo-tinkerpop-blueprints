@@ -22,10 +22,11 @@ import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.GraphQuery;
-import com.tinkerpop.blueprints.TransactionalGraph;
+import com.tinkerpop.blueprints.Graph.Features.GraphFeatures;
+import com.tinkerpop.blueprints.Property;
+import com.tinkerpop.blueprints.query.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.pipes.Pipe;
+import com.tinkerpop.gremlin.process.Step;
 
 /**
  *
@@ -48,8 +49,8 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
 
     @Override
     public DatastoreTransaction getDatastoreTransaction() {
-        if (graph.getFeatures().supportsTransactions) {
-            return new TinkerPopTransaction((TransactionalGraph) graph);
+        if (graph.getFeatures().supports(GraphFeatures.class, GraphFeatures.FEATURE_TRANSACTIONS)) {
+            return new TinkerPopTransaction(graph);
         } else {
             return new DefaultTransaction();
         }
@@ -70,8 +71,8 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
         final Set<String> discriminators = new HashSet<>();
         for (final String key : entity.getPropertyKeys()) {
             if (key.startsWith(XO_DISCRIMINATORS_PROPERTY)) {
-                final String discriminator = entity.getProperty(key);
-                discriminators.add(discriminator);
+                final Property<Object> property = entity.getProperty(key);
+                discriminators.add((String) property.get());
             }
         }
         if (discriminators.size() == 0) {
@@ -154,33 +155,32 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
     public <QL> ResultIterator<Map<String, Object>> executeQuery(final QL query, final Map<String, Object> parameters) {
         final GremlinExpression gremlinExpression = GremlinManager.getGremlinExpression(query, parameters);
         final String expression = gremlinExpression.getExpression();
-        @SuppressWarnings("unchecked")
-        final Pipe<Vertex, ?> pipe = com.tinkerpop.gremlin.groovy.Gremlin.compile(expression);
+        final Step step = com.tinkerpop.gremlin.groovy.GremlinLoader.compile(expression);
         if (parameters.containsKey("this")) {
             final Object setThis = parameters.get("this");
             if (Vertex.class.isAssignableFrom(setThis.getClass())) {
                 final Vertex vertex = (Vertex) setThis;
-                pipe.setStarts(Arrays.asList(vertex));
+                step.addStarts(Arrays.asList(vertex));
             } else if (Edge.class.isAssignableFrom(setThis.getClass())) {
                 final Edge edge = (Edge) setThis;
-                pipe.setStarts(Arrays.asList(edge.getVertex(Direction.IN), edge.getVertex(Direction.OUT)));
+                step.addStarts(Arrays.asList(edge.getVertex(Direction.IN), edge.getVertex(Direction.OUT)));
             } else {
                 throw new XOException("Unsupported start point '" + String.valueOf(setThis) + "' (class=" + setThis.getClass() + ")");
             }
         } else {
-            pipe.setStarts(graph.query().vertices());
+            step.addStarts(graph.query().vertices());
         }
         return new ResultIterator<Map<String, Object>>() {
 
             @Override
             public boolean hasNext() {
-                return pipe.hasNext();
+                return step.hasNext();
             }
 
             @Override
             public Map<String, Object> next() {
                 final Map<String, Object> results = new HashMap<>();
-                final Object next = pipe.next();
+                final Object next = step.next();
                 if (next instanceof Vertex) {
                     results.put(gremlinExpression.getResultName(), next);
                 } else if (next instanceof Edge) {
@@ -197,7 +197,7 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
 
             @Override
             public void remove() {
-                pipe.remove();
+                step.remove();
             }
 
             @Override

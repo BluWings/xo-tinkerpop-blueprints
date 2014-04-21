@@ -11,7 +11,7 @@ import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
 import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.GraphFactory;
+import com.tinkerpop.blueprints.util.GraphFactory;
 
 /**
  *
@@ -44,7 +44,8 @@ public class TinkerPopDatastore implements Datastore<TinkerPopDatastoreSession<G
 
     @Override
     public void close() {
-        graph.shutdown();
+        // TODO: close()?
+        // graph.shutdown();
         graph = null;
     }
 

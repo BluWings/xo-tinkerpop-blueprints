@@ -6,14 +6,13 @@ import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.spi.datastore.DatastorePropertyManager;
 import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
 import com.buschmais.xo.spi.metadata.type.RelationTypeMetadata;
-
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
-
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.VertexQuery;
+import com.tinkerpop.blueprints.query.VertexQuery;
+import com.tinkerpop.blueprints.util.ElementHelper;
 
 /**
  *
@@ -89,10 +88,10 @@ public class TinkerPopPropertyManager implements DatastorePropertyManager<Vertex
         Iterable<Edge> edges;
         switch (direction) {
             case FROM:
-                edges = source.getEdges(Direction.OUT, label);
+                edges = source.query().direction(Direction.OUT).labels(label).edges();
                 break;
             case TO:
-                edges = source.getEdges(Direction.IN, label);
+                edges = source.query().direction(Direction.IN).labels(label).edges();
                 break;
             default:
                 throw new XOException("Unkown direction '" + direction.name() + "'.");
