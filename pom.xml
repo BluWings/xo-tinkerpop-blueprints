@@ -290,4 +290,5 @@
         </profile>
     </profiles>
 
+    <description>eXtended Objects - TinkerPop Blueprints Binding</description>
 </project>
