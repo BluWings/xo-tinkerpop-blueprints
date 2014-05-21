@@ -2,6 +2,7 @@ package com.smbtec.xo.tinkerpop.blueprints.test.demo;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -42,15 +43,8 @@ public class CrudTest extends AbstractTinkerPopXOManagerTest {
         xoManager.currentTransaction().commit();
         xoManager.currentTransaction().begin();
 
-//        xoManager.createQuery("match (a:A) where a.name={name} return a").withParameter("name", "Bar").execute().getSingleResult();
-//        xoManager.delete(a);
-//        xoManager.currentTransaction().commit();
-//        xoManager.currentTransaction().begin();
-//        try {
-//            xoManager.createQuery("match (a:A) return a").execute().getSingleResult();
-//            Assert.fail("An exception is expected.");
-//        } catch (final XOException e) {
-//        }
+        A match = xoManager.createQuery("g.v(0)", A.class).execute().getSingleResult();
+        assertThat(a, notNullValue());
 
         xoManager.currentTransaction().commit();
     }
