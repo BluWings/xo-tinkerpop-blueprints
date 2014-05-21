@@ -77,7 +77,7 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
                 discriminators.add(discriminator);
             }
         }
-        if (discriminators.size() == 0) {
+        if (discriminators.isEmpty()) {
             throw new XOException("A vertex was found without discriminators. Does another framework alter the database?");
         }
         return discriminators;
@@ -165,63 +165,6 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
             }
         };
     }
-
-//    @Override
-//    public <QL> ResultIterator<Map<String, Object>> executeQuery(final QL query, final Map<String, Object> parameters) {
-//        final GremlinExpression gremlinExpression = GremlinManager.getGremlinExpression(query, parameters);
-//        final String expression = gremlinExpression.getExpression();
-//        @SuppressWarnings("unchecked")
-//        final Pipe<Vertex, ?> pipe = com.tinkerpop.gremlin.groovy.Gremlin.compile(expression);
-//        if (parameters.containsKey("this")) {
-//            final Object setThis = parameters.get("this");
-//            if (Vertex.class.isAssignableFrom(setThis.getClass())) {
-//                final Vertex vertex = (Vertex) setThis;
-//                pipe.setStarts(Arrays.asList(vertex));
-//            } else if (Edge.class.isAssignableFrom(setThis.getClass())) {
-//                final Edge edge = (Edge) setThis;
-//                pipe.setStarts(Arrays.asList(edge.getVertex(Direction.IN), edge.getVertex(Direction.OUT)));
-//            } else {
-//                throw new XOException("Unsupported start point '" + String.valueOf(setThis) + "' (class=" + setThis.getClass() + ")");
-//            }
-//        } else {
-//            pipe.setStarts(graph.query().vertices());
-//        }
-//        return new ResultIterator<Map<String, Object>>() {
-//
-//            @Override
-//            public boolean hasNext() {
-//                return pipe.hasNext();
-//            }
-//
-//            @Override
-//            public Map<String, Object> next() {
-//                final Map<String, Object> results = new HashMap<>();
-//                final Object next = pipe.next();
-//                if (next instanceof Vertex) {
-//                    results.put(gremlinExpression.getResultName(), next);
-//                } else if (next instanceof Edge) {
-//                    results.put(gremlinExpression.getResultName(), next);
-//                } else if (next instanceof Map) {
-//                    @SuppressWarnings("unchecked")
-//                    final Map<String, Object> map = (Map<String, Object>) next;
-//                    results.putAll(map);
-//                } else {
-//                    results.put("unknown_type", next);
-//                }
-//                return results;
-//            }
-//
-//            @Override
-//            public void remove() {
-//                pipe.remove();
-//            }
-//
-//            @Override
-//            public void close() {
-//                // there is no close required in pipe
-//            }
-//        };
-//    }
 
     @Override
     public void migrateEntity(final Vertex entity, final TypeMetadataSet<EntityTypeMetadata<VertexMetadata>> types, final Set<String> discriminators,

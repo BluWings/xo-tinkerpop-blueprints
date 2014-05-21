@@ -48,7 +48,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
             } else if (result instanceof Iterable) {
                 return convertIterator(((Iterable<?>) result).iterator());
             } else if (result instanceof Iterator) {
-                return convertIterator(((Iterator<?>) result));
+                return convertIterator((Iterator<?>) result);
             } else if (result instanceof Map) {
                 throw new UnsupportedOperationException("Result of type 'Map' not yet supported");
             }
