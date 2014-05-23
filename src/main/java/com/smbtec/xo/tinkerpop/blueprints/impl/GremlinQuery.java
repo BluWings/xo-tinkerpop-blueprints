@@ -19,6 +19,11 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.pipes.util.structures.Table;
 
+/**
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ *
+ */
 public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
     private static final String NODE_COLUMN_NAME = "node";
