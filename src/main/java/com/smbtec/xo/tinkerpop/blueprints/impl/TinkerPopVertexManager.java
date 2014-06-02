@@ -63,10 +63,14 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
     }
 
     @Override
-    public Vertex createEntity(TypeMetadataSet<EntityTypeMetadata<VertexMetadata>> types, Set<String> discriminators) {
+    public Vertex createEntity(TypeMetadataSet<EntityTypeMetadata<VertexMetadata>> types, Set<String> discriminators,
+            Map<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> exampleEntity) {
         final Vertex vertex = graph.addVertex(null);
         for (final String discriminator : discriminators) {
             vertex.setProperty(XO_DISCRIMINATORS_PROPERTY + discriminator, discriminator);
+        }
+        for (Map.Entry<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> entry : exampleEntity.entrySet()) {
+            setProperty(vertex, entry.getKey(), entry.getValue());
         }
         return vertex;
     }
@@ -120,7 +124,7 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
 
             @Override
             public void close() {
-                // intentionally left empty
+                // intentionally left blank
             }
         };
     }
