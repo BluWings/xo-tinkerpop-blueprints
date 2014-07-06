@@ -264,7 +264,7 @@
 
     <properties>
         <com.tinkerpop.blueprints_version>2.5.0</com.tinkerpop.blueprints_version>
-        <com.buschmais.xo_version>0.4.0-SNAPSHOT</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.4.0</com.buschmais.xo_version>
         <bundle.name>com.smb-tec.xo.${project.artifactId}</bundle.name>
         <neo4j.version>1.9.6</neo4j.version>
     </properties>
