@@ -119,10 +119,8 @@
                                     <Bundle-Name>${project.name} (Source)</Bundle-Name>
                                     <Bundle-SymbolicName>${bundle.name}.source</Bundle-SymbolicName>
                                     <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                                    <Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
-                                    <Eclipse-SourceBundle>
-                                        ${bundle.name};version="${parsedVersion.osgiVersion}";roots:="."
-                                    </Eclipse-SourceBundle>
+                                    <Bundle-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${build.timestamp}</Bundle-Version>
+                                    <Eclipse-SourceBundle>${bundle.name};version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${build.timestamp}";roots:="."</Eclipse-SourceBundle>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -175,9 +173,18 @@
                         </goals>
                         <configuration>
                             <instructions>
-                                <DynamicImport-Package>*</DynamicImport-Package>
+                                <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                                 <Bundle-Name>${project.name}</Bundle-Name>
-                            </instructions>
+                                <Bundle-DocURL>${project.url}</Bundle-DocURL>
+                                <Bundle-RequiredExecutionEnvironment>JavaSE-1.7</Bundle-RequiredExecutionEnvironment>
+                                <Bundle-SymbolicName>com.smb-tec.xo.tinkerpop-blueprints</Bundle-SymbolicName>
+                                <DynamicImport-Package>*</DynamicImport-Package>
+                                <Export-Package>
+                                    com.smbtec.xo.tinkerpop.blueprints.api.*;version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"
+                                </Export-Package>
+                                <_snapshot>${maven.build.timestamp}</_snapshot>
+                                <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
+                                </instructions>
                         </configuration>
                     </execution>
                 </executions>
@@ -263,9 +270,10 @@
 
     <properties>
         <com.tinkerpop.blueprints_version>2.5.0</com.tinkerpop.blueprints_version>
-        <com.buschmais.xo_version>0.4.0</com.buschmais.xo_version>
-        <bundle.name>com.smb-tec.xo.${project.artifactId}</bundle.name>
+        <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
+        <bundle.name>com.smb-tec.xo.tinkerpop-blueprints</bundle.name>
         <neo4j.version>1.9.6</neo4j.version>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     </properties>
 
     <issueManagement>
