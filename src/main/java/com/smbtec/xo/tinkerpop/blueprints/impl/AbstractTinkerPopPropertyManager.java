@@ -1,5 +1,7 @@
 package com.smbtec.xo.tinkerpop.blueprints.impl;
 
+import java.util.Map;
+
 import com.buschmais.xo.spi.datastore.DatastorePropertyManager;
 import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
@@ -31,6 +33,15 @@ public class AbstractTinkerPopPropertyManager<E extends Element> implements Data
     @Override
     public Object getProperty(E element, PrimitivePropertyMethodMetadata<PropertyMetadata> metadata) {
         return element.getProperty(metadata.getDatastoreMetadata().getName());
+    }
+
+    protected void setProperties(E element, Map<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> example) {
+        for (Map.Entry<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> entry : example.entrySet()) {
+            Object value = entry.getValue();
+            if (value != null) {
+                setProperty(element, entry.getKey(), value);
+            }
+        }
     }
 
 }

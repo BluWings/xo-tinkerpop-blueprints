@@ -1,13 +1,16 @@
 package com.smbtec.xo.tinkerpop.blueprints.impl;
 
 import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.commons.digester.SetPropertiesRule;
 
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.spi.datastore.DatastoreRelationManager;
+import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
 import com.buschmais.xo.spi.metadata.type.RelationTypeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
-
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -32,16 +35,23 @@ public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager<Edge>
     }
 
     @Override
-    public Edge createRelation(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata, RelationTypeMetadata.Direction direction, Vertex target) {
+    public Edge createRelation(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata,
+            com.buschmais.xo.spi.metadata.type.RelationTypeMetadata.Direction direction, Vertex target,
+            Map<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> exampleEntity) {
         final String name = metadata.getDatastoreMetadata().getDiscriminator();
+        Edge edge;
         switch (direction) {
-            case FROM:
-                return source.addEdge(name, target);
-            case TO:
-                return target.addEdge(name, source);
-            default:
-                throw new XOException("Unknown direction '" + direction.name() + "'.");
+        case FROM:
+            edge = source.addEdge(name, target);
+            break;
+        case TO:
+            edge = target.addEdge(name, source);
+            break;
+        default:
+            throw new XOException("Unknown direction '" + direction.name() + "'.");
         }
+        setProperties(edge, exampleEntity);
+        return edge;
     }
 
     @Override
@@ -60,18 +70,19 @@ public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager<Edge>
     }
 
     @Override
-    public boolean hasSingleRelation(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata, RelationTypeMetadata.Direction direction) {
+    public boolean hasSingleRelation(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata,
+            RelationTypeMetadata.Direction direction) {
         final String label = metadata.getDatastoreMetadata().getDiscriminator();
         long count;
         switch (direction) {
-            case FROM:
-                count = source.query().direction(Direction.OUT).labels(label).count();
-                break;
-            case TO:
-                count = source.query().direction(Direction.IN).labels(label).count();
-                break;
-            default:
-                throw new XOException("Unkown direction '" + direction.name() + "'.");
+        case FROM:
+            count = source.query().direction(Direction.OUT).labels(label).count();
+            break;
+        case TO:
+            count = source.query().direction(Direction.IN).labels(label).count();
+            break;
+        default:
+            throw new XOException("Unkown direction '" + direction.name() + "'.");
         }
         if (count > 1) {
             throw new XOException("Multiple results are available.");
@@ -80,18 +91,19 @@ public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager<Edge>
     }
 
     @Override
-    public Edge getSingleRelation(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata, RelationTypeMetadata.Direction direction) {
+    public Edge getSingleRelation(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata,
+            RelationTypeMetadata.Direction direction) {
         final String label = metadata.getDatastoreMetadata().getDiscriminator();
         Iterable<Edge> edges;
         switch (direction) {
-            case FROM:
-                edges = source.getEdges(Direction.OUT, label);
-                break;
-            case TO:
-                edges = source.getEdges(Direction.IN, label);
-                break;
-            default:
-                throw new XOException("Unkown direction '" + direction.name() + "'.");
+        case FROM:
+            edges = source.getEdges(Direction.OUT, label);
+            break;
+        case TO:
+            edges = source.getEdges(Direction.IN, label);
+            break;
+        default:
+            throw new XOException("Unkown direction '" + direction.name() + "'.");
         }
         final Iterator<Edge> iterator = edges.iterator();
         if (!iterator.hasNext()) {
@@ -105,18 +117,19 @@ public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager<Edge>
     }
 
     @Override
-    public Iterable<Edge> getRelations(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata, RelationTypeMetadata.Direction direction) {
+    public Iterable<Edge> getRelations(Vertex source, RelationTypeMetadata<EdgeMetadata> metadata,
+            RelationTypeMetadata.Direction direction) {
         final String label = metadata.getDatastoreMetadata().getDiscriminator();
         VertexQuery query = source.query();
         switch (direction) {
-            case TO:
-                query = query.direction(Direction.IN);
-                break;
-            case FROM:
-                query = query.direction(Direction.OUT);
-                break;
-            default:
-                throw new XOException("Unknown direction '" + direction.name() + "'.");
+        case TO:
+            query = query.direction(Direction.IN);
+            break;
+        case FROM:
+            query = query.direction(Direction.OUT);
+            break;
+        default:
+            throw new XOException("Unknown direction '" + direction.name() + "'.");
         }
         return query.labels(label).edges();
     }

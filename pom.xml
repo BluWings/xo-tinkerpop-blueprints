@@ -117,7 +117,8 @@
                             <archive>
                                 <manifestEntries>
                                     <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
-                                    <Bundle-Name>${project.name} (Source)</Bundle-Name>
+                                    <Bundle-Name>${project.name}
+                                        (Source)</Bundle-Name>
                                     <Bundle-SymbolicName>${bundle.name}.source</Bundle-SymbolicName>
                                     <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                                     <Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
@@ -142,6 +143,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <excludePackageNames>*.schema.*</excludePackageNames>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -227,9 +232,13 @@
             <version>${com.buschmais.xo_version}</version>
         </dependency>
         <!-- <dependency> <groupId>com.orientechnologies</groupId> <artifactId>orientdb-graphdb</artifactId>
-            <version>1.7-rc2</version> <scope>test</scope> </dependency> <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId> <artifactId>blueprints-neo4j-graph</artifactId>
-            <version>2.5.0</version> <scope>test</scope> </dependency> -->
+            <version>1.7-rc2</version> <scope>test</scope> </dependency> <dependency> -->
+        <dependency>
+            <groupId>com.tinkerpop.blueprints</groupId>
+            <artifactId>blueprints-neo4j-graph</artifactId>
+            <version>${com.tinkerpop.blueprints_version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -263,8 +272,8 @@
     <version>0.0.2-SNAPSHOT</version>
 
     <properties>
-        <com.tinkerpop.blueprints_version>2.5.0</com.tinkerpop.blueprints_version>
-        <com.buschmais.xo_version>0.4.0</com.buschmais.xo_version>
+        <com.tinkerpop.blueprints_version>2.6.0</com.tinkerpop.blueprints_version>
+        <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
         <bundle.name>com.smb-tec.xo.${project.artifactId}</bundle.name>
         <neo4j.version>1.9.6</neo4j.version>
     </properties>
