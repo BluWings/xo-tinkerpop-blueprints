@@ -1,11 +1,8 @@
 package com.smbtec.xo.tinkerpop.blueprints.test.demo.composite;
 
-import com.buschmais.xo.api.annotation.ResultOf;
-import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Vertex;
-
 import java.util.List;
 
-import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Vertex;
 
 @Vertex("Group")
 public interface Group {

@@ -17,7 +17,6 @@ import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopXOProvider;
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
 public abstract class AbstractTinkerPopXOManagerTest extends com.buschmais.xo.test.AbstractXOManagerTest {
