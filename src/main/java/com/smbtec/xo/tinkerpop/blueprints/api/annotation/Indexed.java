@@ -10,7 +10,6 @@ import com.buschmais.xo.spi.annotation.IndexDefinition;
 
 /**
  * Marks a property as to be indexed.
- * <p/>
  * <p>
  * An indexed property is used to find instances using
  * {@link XOManager#find(Class, Object)}.

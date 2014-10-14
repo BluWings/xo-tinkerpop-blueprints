@@ -1,7 +1,10 @@
 package com.smbtec.xo.tinkerpop.blueprints.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.script.Bindings;
@@ -17,7 +20,6 @@ import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Gremlin;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.pipes.util.structures.Table;
 
 /**
  *
@@ -48,88 +50,14 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
             final Bindings bindings = createBindings(parameters, tinkerPopGraph);
             final Object result = engine.eval(script, bindings);
 
-            if (result instanceof Table) {
-                throw new UnsupportedOperationException("Result of type 'Table' not yet supported");
-            } else if (result instanceof Iterable) {
-                return convertIterator(((Iterable<?>) result).iterator());
-            } else if (result instanceof Iterator) {
-                return convertIterator((Iterator<?>) result);
-            } else if (result instanceof Map) {
-                throw new UnsupportedOperationException("Result of type 'Map' not yet supported");
+            if (result instanceof Iterable<?>) {
+                return new IterableResultIterator((Iterable<?>) result);
+            } else {
+                return new SimpleResultIterator(result);
             }
-            return convertSingleObject(result);
-
         } catch (Exception e) {
             throw new XOException(e.getMessage(), e);
         }
-    }
-
-    private ResultIterator<Map<String, Object>> convertSingleObject(final Object data) {
-        return new ResultIterator<Map<String, Object>>() {
-
-            private boolean hasNext = true;
-
-            @Override
-            public boolean hasNext() {
-                return hasNext;
-            }
-
-            @Override
-            public Map<String, Object> next() {
-                Map<String, Object> result = new HashMap<>();
-                if (data instanceof Vertex) {
-                    result.put(NODE_COLUMN_NAME, data);
-                } else if (data instanceof Edge) {
-                    result.put(EDGE_COLUMN_NAME, data);
-                } else if (data instanceof Graph) {
-                    result.put(GRAPH_COLUMN_NAME, ((Graph) data).toString());
-                }
-                hasNext = false;
-                return result;
-            }
-
-            @Override
-            public void remove() {
-                throw new XOException("Remove operation is not supported for query results.");
-            }
-
-            @Override
-            public void close() {
-            }
-        };
-    }
-
-    private ResultIterator<Map<String, Object>> convertIterator(final Iterator<?> iterator) {
-        return new ResultIterator<Map<String, Object>>() {
-
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public Map<String, Object> next() {
-                Object data = iterator.next();
-                Map<String, Object> result = new HashMap<>();
-                if (data instanceof Vertex) {
-                    result.put(NODE_COLUMN_NAME, data);
-                } else if (data instanceof Edge) {
-                    result.put(EDGE_COLUMN_NAME, data);
-                } else if (data instanceof Graph) {
-                    result.put(GRAPH_COLUMN_NAME, ((Graph) data).toString());
-                }
-                return result;
-            }
-
-            @Override
-            public void remove() {
-                throw new XOException("Remove operation is not supported for query results.");
-            }
-
-            @Override
-            public void close() {
-            }
-        };
     }
 
     @Override
@@ -151,4 +79,90 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
         return bindings;
     }
 
+    protected static class IterableResultIterator implements ResultIterator<Map<String, Object>> {
+
+        private Iterator<?> iterator;
+
+        public IterableResultIterator(Iterable<?> iterable) {
+            this.iterator = iterable.iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Map<String, Object> next() {
+            Map<String, Object> map = new HashMap<>();
+            map.put("", entityRepresentation(iterator.next()));
+            return map;
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public void remove() {
+        }
+
+    }
+
+    protected static class SimpleResultIterator implements ResultIterator<Map<String, Object>> {
+
+        private Object entity;
+        private boolean hasNext = true;
+
+        public SimpleResultIterator(Object entity) {
+            this.entity = entity;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return hasNext;
+        }
+
+        @Override
+        public Map<String, Object> next() {
+            Map<String, Object> map = new HashMap<>();
+            map.put("", entityRepresentation(entity));
+            hasNext = false;
+            return map;
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public void remove() {
+        }
+
+    }
+
+    public static Object entityRepresentation(Object entity) {
+        if (entity instanceof Vertex) {
+            return entity;
+        } else if (entity instanceof Edge) {
+            return entity;
+        } else if (entity instanceof Graph) {
+            return entity;
+        } else if (entity instanceof Double || entity instanceof Float) {
+            return ((Number) entity).doubleValue();
+        } else if (entity instanceof Long || entity instanceof Integer) {
+            return ((Number) entity).longValue();
+        } else if (entity instanceof BigDecimal) {
+            return ((BigDecimal) entity).doubleValue();
+        } else if (entity == null) {
+            return null;
+        } else if (entity instanceof Iterable<?>) {
+            List<Object> representation = new ArrayList<Object>();
+            for (final Object r : (Iterable<?>) entity) {
+                representation.add(entityRepresentation(r));
+            }
+            return representation;
+        }
+        return entity.toString();
+    }
 }
