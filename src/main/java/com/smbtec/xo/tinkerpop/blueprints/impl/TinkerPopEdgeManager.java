@@ -3,8 +3,6 @@ package com.smbtec.xo.tinkerpop.blueprints.impl;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.digester.SetPropertiesRule;
-
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.spi.datastore.DatastoreRelationManager;
 import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
