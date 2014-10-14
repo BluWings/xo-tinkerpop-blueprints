@@ -142,10 +142,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <excludePackageNames>*.schema.*</excludePackageNames>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
