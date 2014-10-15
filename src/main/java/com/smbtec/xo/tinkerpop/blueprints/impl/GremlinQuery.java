@@ -58,7 +58,11 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
     private ScriptEngine engine;
 
     public GremlinQuery(TinkerPopDatastoreSession<Graph> session) {
-        tinkerPopGraph = session.getGraph();
+        this(session.getGraph());
+    }
+
+    public GremlinQuery(Graph graph) {
+        tinkerPopGraph = graph;
         engine = new ScriptEngineManager().getEngineByName(GREMLIN_GROOVY);
     }
 
@@ -97,7 +101,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
         return bindings;
     }
 
-    protected static class IterableResultIterator implements ResultIterator<Map<String, Object>> {
+    protected class IterableResultIterator implements ResultIterator<Map<String, Object>> {
 
         private Iterator<?> iterator;
 
@@ -128,7 +132,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
     }
 
-    protected static class SimpleResultIterator implements ResultIterator<Map<String, Object>> {
+    protected class SimpleResultIterator implements ResultIterator<Map<String, Object>> {
 
         private Object entity;
         private boolean hasNext = true;
@@ -161,7 +165,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
     }
 
-    public static Object entityRepresentation(Object entity) {
+    public Object entityRepresentation(Object entity) {
         if (entity instanceof Vertex) {
             return entity;
         } else if (entity instanceof Edge) {
