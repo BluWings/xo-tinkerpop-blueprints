@@ -105,6 +105,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
         @Override
         public void remove() {
+            throw new XOException("Remove operation is not supported for query results.");
         }
 
     }
@@ -137,6 +138,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
         @Override
         public void remove() {
+            throw new XOException("Remove operation is not supported for query results.");
         }
 
     }
