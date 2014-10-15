@@ -5,19 +5,19 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.buschmais.xo.api.Example;
-import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
@@ -144,9 +144,28 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void ages() {
         getXoManager().currentTransaction().begin();
-        Result<Long> result = getXoManager().createQuery("g.V('lastname','Doe').outE('friends').inV().age", Long.class).execute();
-        assertThat(result, IsIterableWithSize.<Long>iterableWithSize(1));
+        Result<Long> result = getXoManager().createQuery("g.V('lastname','Doe').outE('friends').inV().age", Long.class)
+                .execute();
+        assertThat(result, IsIterableWithSize.<Long> iterableWithSize(1));
         getXoManager().currentTransaction().commit();
+    }
+
+    @Test
+    public void parameterizedQuery() {
+        XOManager xoManager = getXoManager();
+        xoManager.currentTransaction().begin();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("me", 0);
+        String result = xoManager.createQuery("g.v(me).firstname", String.class).withParameters(parameters).execute()
+                .getSingleResult();
+        assertThat(result, equalTo("John"));
+        result = xoManager.createQuery("g.V.filter(){it.firstname==name}.lastname", String.class).withParameter("name", "John").execute()
+                .getSingleResult();
+        assertThat(result, equalTo("Doe"));
+        result = xoManager.createQuery("g.V('firstname',name).lastname", String.class).withParameter("name", "John").execute()
+                .getSingleResult();
+        assertThat(result, equalTo("Doe"));
+        xoManager.currentTransaction().commit();
     }
 
 }
