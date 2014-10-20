@@ -199,11 +199,6 @@
             <artifactId>xo.spi</artifactId>
             <version>${com.buschmais.xo_version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.impl</artifactId>
-            <version>${com.buschmais.xo_version}</version>
-        </dependency>
         <!-- TinkerPop Blueprints API -->
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
