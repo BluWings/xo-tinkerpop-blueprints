@@ -58,7 +58,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
     private Graph tinkerPopGraph;
 
-    private ScriptEngine engine;
+    private static ScriptEngine engine;
 
     public GremlinQuery(TinkerPopDatastoreSession<Graph> session) {
         this(session.getGraph());
