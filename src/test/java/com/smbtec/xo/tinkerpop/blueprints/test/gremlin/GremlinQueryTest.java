@@ -11,18 +11,21 @@ import java.util.Map;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
 import com.smbtec.xo.tinkerpop.blueprints.test.AbstractTinkerPopXOManagerTest;
 import com.smbtec.xo.tinkerpop.blueprints.test.gremlin.composite.Person;
+import com.smbtec.xo.tinkerpop.blueprints.test.gremlin.composite.SimpleNamed;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 
@@ -31,6 +34,7 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
 
     private Person john;
     private Person mary;
+    private Person jDow;
 
     public GremlinQueryTest(XOUnit xoUnit) {
         super(xoUnit);
@@ -45,9 +49,12 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
     public void populate() {
         XOManager xoManager = getXoManager();
         xoManager.currentTransaction().begin();
-        Graph graph = xoManager.getDatastoreSession(TinkerPopDatastoreSession.class).getGraph();
-        ((KeyIndexableGraph) graph).createKeyIndex("firstname", com.tinkerpop.blueprints.Vertex.class);
-        ((KeyIndexableGraph) graph).createKeyIndex("lastname", com.tinkerpop.blueprints.Vertex.class);
+        Graph graph = xoManager.getDatastoreSession(
+                TinkerPopDatastoreSession.class).getGraph();
+        ((KeyIndexableGraph) graph).createKeyIndex("firstname",
+                com.tinkerpop.blueprints.Vertex.class);
+        ((KeyIndexableGraph) graph).createKeyIndex("lastname",
+                com.tinkerpop.blueprints.Vertex.class);
         john = xoManager.create(new Example<Person>() {
 
             @Override
@@ -68,14 +75,27 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
             }
 
         }, Person.class);
+
+        jDow = xoManager.create(new Example<Person>() {
+
+            @Override
+            public void prepare(Person example) {
+                example.setFirstname("Jon");
+                example.setLastname("Dow");
+                example.setAge(31);
+            }
+
+        }, Person.class);
         john.getFriends().add(mary);
+        john.getFriends().add(jDow);
         xoManager.currentTransaction().commit();
     }
 
     @Test
     public void selectVertex() {
         getXoManager().currentTransaction().begin();
-        Person person = getXoManager().createQuery("g.v(0)", Person.class).execute().getSingleResult();
+        Person person = getXoManager().createQuery("g.v(0)", Person.class)
+                .execute().getSingleResult();
         assertThat(person, equalTo(john));
         getXoManager().currentTransaction().commit();
     }
@@ -83,34 +103,45 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void selectVertices() {
         getXoManager().currentTransaction().begin();
-        Result<Person> result = getXoManager().createQuery("g.V[0..10]", Person.class).execute();
-        assertThat(result, IsIterableContainingInAnyOrder.<Person> containsInAnyOrder(john, mary));
+        Result<Person> result = getXoManager().createQuery("g.V[0..10]",
+                Person.class).execute();
+        assertThat(result,
+                IsIterableContainingInAnyOrder.<Person> containsInAnyOrder(
+                        john, mary, jDow));
         getXoManager().currentTransaction().commit();
     }
 
     @Test
     public void selectAttributeOfVertex() {
         getXoManager().currentTransaction().begin();
-        String firstName = getXoManager().createQuery("g.v(0).firstname", String.class).execute().getSingleResult();
-        assertThat(firstName, equalTo("John"));
-        firstName = getXoManager().createQuery("g.v(0).outE('friends').inV().firstname", String.class).execute()
+        String firstName = getXoManager()
+                .createQuery("g.v(0).firstname", String.class).execute()
                 .getSingleResult();
-        assertThat(firstName, equalTo("Mary"));
+        assertThat(firstName, equalTo("John"));
+        Result<String> result = getXoManager()
+                .createQuery("g.v(0).outE('friends').inV().firstname",
+                        String.class).execute();
+        assertThat(result,IsIterableWithSize.<String> iterableWithSize(2));
         getXoManager().currentTransaction().commit();
     }
 
     @Test
     public void selectAttributeOfVertices() {
         getXoManager().currentTransaction().begin();
-        Result<String> result = getXoManager().createQuery("g.V[0..10].firstname", String.class).execute();
-        assertThat(result, IsIterableContainingInAnyOrder.<String> containsInAnyOrder("John", "Mary"));
+        Result<String> result = getXoManager().createQuery(
+                "g.V[0..10].firstname", String.class).execute();
+        assertThat(result,
+                IsIterableContainingInAnyOrder.<String> containsInAnyOrder(
+                        "John", "Mary", "Jon"));
         getXoManager().currentTransaction().commit();
     }
 
     @Test
     public void selectVertexByAttribute() {
         getXoManager().currentTransaction().begin();
-        Person person = getXoManager().createQuery("g.V('firstname','John')", Person.class).execute().getSingleResult();
+        Person person = getXoManager()
+                .createQuery("g.V('firstname','John')", Person.class).execute()
+                .getSingleResult();
         assertThat(person, equalTo(john));
         getXoManager().currentTransaction().commit();
     }
@@ -119,7 +150,9 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
     public void countVertices() {
         XOManager xoManager = getXoManager();
         xoManager.currentTransaction().begin();
-        Long count = xoManager.createQuery("g.V('firstname','John').count()", Long.class).execute().getSingleResult();
+        Long count = xoManager
+                .createQuery("g.V('firstname','John').count()", Long.class)
+                .execute().getSingleResult();
         assertThat(count, equalTo(1L));
         xoManager.currentTransaction().commit();
     }
@@ -128,8 +161,9 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
     public void countEdges() {
         XOManager xoManager = getXoManager();
         xoManager.currentTransaction().begin();
-        Long count = xoManager.createQuery("g.v(0).outE().count()", Long.class).execute().getSingleResult();
-        assertThat(count, equalTo(1L));
+        Long count = xoManager.createQuery("g.v(0).outE().count()", Long.class)
+                .execute().getSingleResult();
+        assertThat(count, equalTo(2L));
         xoManager.currentTransaction().commit();
     }
 
@@ -137,16 +171,18 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
     public void inOutEdges() {
         getXoManager().currentTransaction().begin();
         // this query must fail, since we do not have a typed relationship
-        getXoManager().createQuery("g.v(0).outE('friends')").execute().getSingleResult();
+        getXoManager().createQuery("g.v(0).outE('friends')").execute()
+                .getSingleResult();
         getXoManager().currentTransaction().commit();
     }
 
     @Test
     public void ages() {
         getXoManager().currentTransaction().begin();
-        Result<Long> result = getXoManager().createQuery("g.V('lastname','Doe').outE('friends').inV().age", Long.class)
+        Result<Long> result = getXoManager().createQuery(
+                "g.V('lastname','Doe').outE('friends').inV().age", Long.class)
                 .execute();
-        assertThat(result, IsIterableWithSize.<Long> iterableWithSize(1));
+        assertThat(result, IsIterableWithSize.<Long> iterableWithSize(2));
         getXoManager().currentTransaction().commit();
     }
 
@@ -156,16 +192,29 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
         xoManager.currentTransaction().begin();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("me", 0);
-        String result = xoManager.createQuery("g.v(me).firstname", String.class).withParameters(parameters).execute()
-                .getSingleResult();
+        String result = xoManager
+                .createQuery("g.v(me).firstname", String.class)
+                .withParameters(parameters).execute().getSingleResult();
         assertThat(result, equalTo("John"));
-        result = xoManager.createQuery("g.V.filter(){it.firstname==name}.lastname", String.class).withParameter("name", "John").execute()
+        result = xoManager
+                .createQuery("g.V.filter(){it.firstname==name}.lastname",
+                        String.class).withParameter("name", "John").execute()
                 .getSingleResult();
         assertThat(result, equalTo("Doe"));
-        result = xoManager.createQuery("g.V('firstname',name).lastname", String.class).withParameter("name", "John").execute()
-                .getSingleResult();
+        result = xoManager
+                .createQuery("g.V('firstname',name).lastname", String.class)
+                .withParameter("name", "John").execute().getSingleResult();
         assertThat(result, equalTo("Doe"));
         xoManager.currentTransaction().commit();
     }
 
+    @Test
+    public void mapQuery() {
+        XOManager xoManager = getXoManager();
+        xoManager.currentTransaction().begin();
+        Result<SimpleNamed> result = xoManager.createQuery(SimpleNamed.class)
+                .execute();
+        assertThat(result, IsIterableWithSize.<SimpleNamed> iterableWithSize(2));
+        xoManager.currentTransaction().commit();
+    }
 }
