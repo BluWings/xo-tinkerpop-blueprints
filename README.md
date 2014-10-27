@@ -40,9 +40,9 @@ Build
 
 Start the Maven build on command line
 
-  mvn clean package
+    mvn clean package
 
 Continuous Build
 ----------------
 
-[![Build Status](https://secure.travis-ci.org/BluWings/xo-tinkerpop-blueprints.png)](http://travis-ci.org/BluWings/xo-tinkerpop-blueprints)
+[![Build Status](https://secure.travis-ci.org/SMB-TEC/xo-tinkerpop-blueprints.png)](http://travis-ci.org/SMB-TEC/xo-tinkerpop-blueprints)
