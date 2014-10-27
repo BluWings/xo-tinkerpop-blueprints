@@ -259,7 +259,7 @@
     <url>http://www.github.com/BluWings/xo-tinkerpop-blueprints</url>
     <inceptionYear>2014</inceptionYear>
 
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
 
     <properties>
         <com.tinkerpop.blueprints_version>2.6.0</com.tinkerpop.blueprints_version>
