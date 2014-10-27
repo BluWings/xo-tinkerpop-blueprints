@@ -10,10 +10,10 @@ Our artifacts are published to the Maven Central repository and can be found und
 
 You'll need to add the following dependency in your builds (and Maven will automatically include the additional transitive dependencies to TinkerPop Blueprints for you). It currently uses the TinkerPop Blueprints API 2.6.0 version:
 
-	<dependency>
+    <dependency>
       <groupId>com.smb-tec.xo</groupId>
       <artifactId>xo-tinkerpop-blueprints</artifactId>
-      <version>0.0.3-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>
     </dependency>
 
 There are a lot of different Blueprints-enabled graph backends. See the [TinkerPop Blueprints Wiki](https://github.com/tinkerpop/blueprints/wiki) for a (more or less) complete list of implementations. Note that you have to add a dependency to the Blueprints-enabled graph backend of your choice to your applications ``pom.xml``.
@@ -21,7 +21,8 @@ There are a lot of different Blueprints-enabled graph backends. See the [TinkerP
 |         | xo-tinkerpop-blueprints|extended-objects (XO)|Tinkerpop Blueprints|
 |---------|------------------------|---------------------|--------------------|
 | Version | 0.0.2                  | 0.4.0               | 2.5.0              |
-| Version | 0.0.3-SNAPSHOT         | 0.5.0-SNAPSHOT      | 2.6.0              |
+| Version | 0.0.3                  | 0.4.5               | 2.6.0              |
+| Version | 0.0.4-SNAPSHOT         | 0.5.0-SNAPSHOT      | 2.6.0              |
 
 
 Getting Started
