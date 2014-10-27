@@ -29,6 +29,7 @@ import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.VertexQuery;
 
@@ -39,6 +40,12 @@ import com.tinkerpop.blueprints.VertexQuery;
  */
 public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager<Edge> implements
         DatastoreRelationManager<Vertex, Object, Edge, EdgeMetadata, String, PropertyMetadata> {
+
+    private final Graph graph;
+
+    public TinkerPopEdgeManager(Graph graph) {
+        this.graph = graph;
+    }
 
     @Override
     public boolean isRelation(Object o) {
@@ -78,6 +85,11 @@ public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager<Edge>
     @Override
     public Object getRelationId(Edge relation) {
         return relation.getId();
+    }
+
+    @Override
+    public Edge findRelationById(RelationTypeMetadata<EdgeMetadata> metadata, Object id) {
+        return graph.getEdge(id);
     }
 
     @Override

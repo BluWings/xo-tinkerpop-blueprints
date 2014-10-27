@@ -50,7 +50,7 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
     public TinkerPopDatastoreSessionImpl(final Graph graph) {
         this.graph = graph;
         this.vertexManager = new TinkerPopVertexManager(graph);
-        this.edgeManager = new TinkerPopEdgeManager();
+        this.edgeManager = new TinkerPopEdgeManager(graph);
 
     }
 

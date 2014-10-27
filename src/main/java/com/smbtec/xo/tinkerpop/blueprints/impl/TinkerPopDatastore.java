@@ -18,7 +18,7 @@
  */
 package com.smbtec.xo.tinkerpop.blueprints.impl;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 
@@ -37,7 +37,8 @@ import com.tinkerpop.blueprints.GraphFactory;
  * @author Rick-Rainer Ludwig
  *
  */
-public class TinkerPopDatastore implements Datastore<TinkerPopDatastoreSession<Graph>, VertexMetadata, String, EdgeMetadata, String> {
+public class TinkerPopDatastore implements
+        Datastore<TinkerPopDatastoreSession<Graph>, VertexMetadata, String, EdgeMetadata, String> {
 
     private Graph graph;
 
@@ -46,8 +47,8 @@ public class TinkerPopDatastore implements Datastore<TinkerPopDatastoreSession<G
     }
 
     @Override
-    public void init(final Collection<TypeMetadata> registeredMetadata) {
-        // handle indices
+    public void init(Map<Class<?>, TypeMetadata> registeredMetadata) {
+        // TODO handle indexes
     }
 
     @Override

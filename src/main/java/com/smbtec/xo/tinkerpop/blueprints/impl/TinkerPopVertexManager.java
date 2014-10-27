@@ -81,6 +81,11 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
     }
 
     @Override
+    public Vertex findEntityById(EntityTypeMetadata<VertexMetadata> metadata, String discriminator, Object id) {
+        return graph.getVertex(id);
+    }
+
+    @Override
     public Vertex createEntity(TypeMetadataSet<EntityTypeMetadata<VertexMetadata>> types, Set<String> discriminators,
             Map<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> exampleEntity) {
         final Vertex vertex = graph.addVertex(null);
