@@ -31,15 +31,16 @@ Quick Start
 -----------
 
 ```java
-
-@Vertex
+@Vertex("Person")
 public interface Person {
+    @Property("name")
     String getName();
     void setName(String name);
 }
 
-@Vertex
+@Vertex("Student")
 public interface Student extends Person {
+    @Property("")
     Long getRegNumber();
     void setRegNumber(Long regNumber);
 }
@@ -53,11 +54,13 @@ xoManager.currentTransaction().commit();
 
 // find an entity and modify attributes
 xoManager.currentTransaction().begin();
-Person johnDoe = xoManager.find("John Doe", Person.class);
+Person johnDoe = xoManager
+    .find("John Doe", Person.class)
+    .getSingleResult;
 johnDoe.setName("John Doe Jr.");
 xoManager.currentTransaction().commit();
 
-//
+// use Gremlin query
 xoManager.currentTransaction().begin();
 Student johnDoe = xoManager
     .createQuery("g.V('name','John Doe Jr.')", Student.class)
@@ -69,9 +72,9 @@ xoManager.currentTransaction().commit();
 Getting Help
 ------------
 
-Please visit the project wiki for the latest information : [https://github.com/BluWings/xo-tinkerpop-blueprints/wiki](https://github.com/BluWings/xo-tinkerpop-blueprints/wiki)
+More details on using ``xo-tinkerpop-blueprints`` can be found in the User Guide.
 
-If you are new to eXtended Objects please visit [eXtended Objects project site](https://github.com/buschmais/extended-objects).
+If you are new to eXtended Objects framework please visit the [eXtended Objects project site](https://github.com/buschmais/extended-objects).
 
 License
 -------
