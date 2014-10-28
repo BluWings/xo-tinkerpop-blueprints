@@ -40,7 +40,7 @@ public interface Person {
 
 @Vertex("Student")
 public interface Student extends Person {
-    @Property("")
+    @Property("number")
     Long getRegNumber();
     void setRegNumber(Long regNumber);
 }
