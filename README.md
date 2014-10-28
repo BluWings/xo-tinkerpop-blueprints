@@ -10,11 +10,13 @@ Our artifacts are published to the Maven Central repository and can be found und
 
 You'll need to add the following dependency in your builds (and Maven will automatically include the additional transitive dependencies to TinkerPop Blueprints for you). It currently uses the TinkerPop Blueprints API 2.6.0 version:
 
+```xml
     <dependency>
       <groupId>com.smb-tec.xo</groupId>
       <artifactId>xo-tinkerpop-blueprints</artifactId>
-      <version>0.0.4-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>  
     </dependency>
+```
 
 There are a lot of different Blueprints-enabled graph backends. See the [TinkerPop Blueprints Wiki](https://github.com/tinkerpop/blueprints/wiki) for a (more or less) complete list of implementations. Note that you have to add a dependency to the Blueprints-enabled graph backend of your choice to your applications ``pom.xml``.
 
@@ -57,17 +59,19 @@ xoManager.currentTransaction().commit();
 
 //
 xoManager.currentTransaction().begin();
-
+Student johnDoe = xoManager
+    .createQuery("g.V('name','John Doe Jr.')", Student.class)
+    .execute()
+    .getSingleResult();
 xoManager.currentTransaction().commit();
 ```
-
 
 Getting Help
 ------------
 
 Please visit the project wiki for the latest information : [https://github.com/BluWings/xo-tinkerpop-blueprints/wiki](https://github.com/BluWings/xo-tinkerpop-blueprints/wiki)
 
-If you are new to eXtended Objects (XO) please visit [eXtended Objects ()](https://github.com/buschmais/extended-objects).
+If you are new to eXtended Objects please visit [eXtended Objects project site](https://github.com/buschmais/extended-objects).
 
 License
 -------
