@@ -2,23 +2,24 @@ package com.smbtec.xo.tinkerpop.blueprints.test.gremlin;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
-import com.buschmais.xo.api.ResultIterable;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
@@ -215,6 +216,15 @@ public class GremlinQueryTest extends AbstractTinkerPopXOManagerTest {
         Result<SimpleNamed> result = xoManager.createQuery(SimpleNamed.class)
                 .execute();
         assertThat(result, IsIterableWithSize.<SimpleNamed> iterableWithSize(2));
+        xoManager.currentTransaction().commit();
+    }
+
+    @Test
+    public void primitiveReturnTypes() {
+        XOManager xoManager = getXoManager();
+        xoManager.currentTransaction().begin();
+        Long result = xoManager.createQuery("2 + 1", Long.class).execute().getSingleResult();
+        assertThat(result, is(3L));
         xoManager.currentTransaction().commit();
     }
 }
