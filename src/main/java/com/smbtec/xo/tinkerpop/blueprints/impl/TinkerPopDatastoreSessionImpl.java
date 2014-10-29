@@ -25,6 +25,8 @@ import com.buschmais.xo.spi.datastore.DatastoreEntityManager;
 import com.buschmais.xo.spi.datastore.DatastoreQuery;
 import com.buschmais.xo.spi.datastore.DatastoreRelationManager;
 import com.buschmais.xo.spi.datastore.DatastoreTransaction;
+import com.buschmais.xo.spi.metadata.type.RepositoryTypeMetadata;
+import com.buschmais.xo.spi.session.XOSession;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
 import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Gremlin;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
@@ -93,6 +95,11 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
     @Override
     public DatastoreRelationManager<Vertex, Object, Edge, EdgeMetadata, String, PropertyMetadata> getDatastoreRelationManager() {
         return edgeManager;
+    }
+
+    @Override
+    public <R> R createRepository(XOSession xoSession, RepositoryTypeMetadata repositoryTypeMetadata) {
+        return (R) new TinkerPopRepositoryImpl(graph, xoSession);
     }
 
 }
