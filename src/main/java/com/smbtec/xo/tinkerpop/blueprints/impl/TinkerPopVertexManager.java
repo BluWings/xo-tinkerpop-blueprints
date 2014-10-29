@@ -90,7 +90,7 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
             Map<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> exampleEntity) {
         final Vertex vertex = graph.addVertex(null);
         for (final String discriminator : discriminators) {
-            vertex.setProperty(XO_DISCRIMINATORS_PROPERTY + discriminator, discriminator);
+            vertex.setProperty(getDiscriminatorPropertyKey(discriminator), discriminator);
         }
         for (Map.Entry<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> entry : exampleEntity.entrySet()) {
             setProperty(vertex, entry.getKey(), entry.getValue());
@@ -114,7 +114,8 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
         if (propertyMethodMetadata == null) {
             IndexedPropertyMethodMetadata<?> indexedProperty = entityTypeMetadata.getDatastoreMetadata().getIndexedProperty();
             if (indexedProperty == null) {
-                throw new XOException("Type " + entityTypeMetadata.getAnnotatedType().getAnnotatedElement().getName() + " has no indexed property.");
+                throw new XOException("Type " + entityTypeMetadata.getAnnotatedType().getAnnotatedElement().getName()
+                        + " has no indexed property.");
             }
             propertyMethodMetadata = indexedProperty.getPropertyMethodMetadata();
         }
@@ -122,8 +123,7 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
         Object value = entry.getValue();
 
         GraphQuery query = graph.query();
-        query = query.has(XO_DISCRIMINATORS_PROPERTY + discriminator);
-
+        query = query.has(getDiscriminatorPropertyKey(discriminator));
         query = query.has(propertyMethodMetadata.getDatastoreMetadata().getName(), value);
         final Iterable<Vertex> vertices = query.vertices();
         final Iterator<Vertex> iterator = vertices.iterator();
@@ -157,12 +157,12 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
             TypeMetadataSet<EntityTypeMetadata<VertexMetadata>> targetTypes, Set<String> targetDiscriminators) {
         for (final String discriminator : discriminators) {
             if (!targetDiscriminators.contains(discriminator)) {
-                entity.removeProperty(XO_DISCRIMINATORS_PROPERTY + discriminator);
+                entity.removeProperty(getDiscriminatorPropertyKey(discriminator));
             }
         }
         for (final String discriminator : targetDiscriminators) {
             if (!discriminators.contains(discriminator)) {
-                entity.setProperty(XO_DISCRIMINATORS_PROPERTY + discriminator, discriminator);
+                entity.setProperty(getDiscriminatorPropertyKey(discriminator), discriminator);
             }
         }
     }
@@ -170,5 +170,15 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
     @Override
     public void flushEntity(Vertex entity) {
         // intentionally left empty
+    }
+
+    /**
+     * Returns the property key of the given entity discriminator.
+     *
+     * @param discriminator
+     * @return the property key
+     */
+    public static String getDiscriminatorPropertyKey(String discriminator) {
+        return XO_DISCRIMINATORS_PROPERTY + discriminator;
     }
 }

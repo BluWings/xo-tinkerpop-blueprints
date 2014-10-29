@@ -45,7 +45,7 @@ public class DelegateTest extends AbstractTinkerPopXOManagerTest {
         XOManager xoManager = getXoManager();
         xoManager.currentTransaction().begin();
         Vertex vertex = ((CompositeObject) xoManager.create(A.class)).getDelegate();
-        assertThat(vertex.getProperty(TinkerPopVertexManager.XO_DISCRIMINATORS_PROPERTY + "A"), is(notNullValue()));
+        assertThat(vertex.getProperty(TinkerPopVertexManager.getDiscriminatorPropertyKey("A")), is(notNullValue()));
         xoManager.currentTransaction().commit();
     }
 
@@ -56,7 +56,7 @@ public class DelegateTest extends AbstractTinkerPopXOManagerTest {
         A a = xoManager.create(A.class);
         B b = xoManager.create(B.class);
         xoManager.create(a, A2B.class, b);
-        List<A2B> r = executeQuery("g.V.has('_xo_discriminator_A','A').outE").getColumn("relationship");
+        List<A2B> r = executeQuery("g.V.has('_xo_discriminator_A').outE").getColumn("relationship");
         assertThat(r.size(), equalTo(1));
         Edge edge = ((CompositeObject) r.get(0)).getDelegate();
         assertThat(edge.getLabel(), equalTo("RELATION"));
@@ -68,7 +68,7 @@ public class DelegateTest extends AbstractTinkerPopXOManagerTest {
         XOManager xoManager = getXoManager();
         xoManager.currentTransaction().begin();
         A a = xoManager.create(A.class);
-        Result<CompositeRowObject> row = xoManager.createQuery("g.V.has('_xo_discriminator_A','A')").execute();
+        Result<CompositeRowObject> row = xoManager.createQuery("g.V.has('_xo_discriminator_A')").execute();
         Map<String, Object> delegate = row.getSingleResult().getDelegate();
         assertThat(delegate, IsMapContaining.<String, Object> hasEntry("node", a));
         xoManager.currentTransaction().commit();
