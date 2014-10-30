@@ -49,9 +49,9 @@ import com.tinkerpop.pipes.util.structures.Table;
  */
 public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
-    protected static final String NODE_COLUMN_NAME = "node";
-    protected static final String EDGE_COLUMN_NAME = "relationship";
-    protected static final String GRAPH_COLUMN_NAME = "graph";
+    public static final String NODE_COLUMN_NAME = "node";
+    public static final String EDGE_COLUMN_NAME = "relationship";
+    public static final String GRAPH_COLUMN_NAME = "graph";
 
     private static final String g = "g";
     private static final String GREMLIN_GROOVY = "gremlin-groovy";
