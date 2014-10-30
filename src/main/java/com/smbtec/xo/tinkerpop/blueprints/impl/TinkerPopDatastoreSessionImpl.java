@@ -98,8 +98,10 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
     }
 
     @Override
-    public <R> R createRepository(XOSession xoSession, RepositoryTypeMetadata repositoryTypeMetadata) {
+    public <R> R createRepository(XOSession xoSession, Class<R> type) {
         return (R) new TinkerPopRepositoryImpl(graph, xoSession);
     }
+
+
 
 }
