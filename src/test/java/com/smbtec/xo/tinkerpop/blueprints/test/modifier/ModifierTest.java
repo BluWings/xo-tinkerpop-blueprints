@@ -35,7 +35,6 @@ public class ModifierTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void abstractModifier() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         try {
             xoManager.create(AbstractType.class);
             fail("Expecting an " + XOException.class.getName());
@@ -44,13 +43,11 @@ public class ModifierTest extends AbstractTinkerPopXOManagerTest {
         CompositeObject compositeObject = xoManager.create(AbstractType.class, ConcreteType.class);
         assertThat(compositeObject, instanceOf(AbstractType.class));
         assertThat(compositeObject, instanceOf(ConcreteType.class));
-        xoManager.currentTransaction().commit();
     }
 
     @Test
     public void finalModifier() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         FinalType finalType = xoManager.create(FinalType.class);
         assertThat(finalType, instanceOf(FinalType.class));
         try {
@@ -58,7 +55,6 @@ public class ModifierTest extends AbstractTinkerPopXOManagerTest {
             fail("Expecting an " + XOException.class.getName());
         } catch (XOException e) {
         }
-        xoManager.currentTransaction().commit();
     }
 
 }

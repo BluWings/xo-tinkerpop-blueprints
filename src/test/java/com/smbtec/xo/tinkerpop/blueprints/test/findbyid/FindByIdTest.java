@@ -32,22 +32,18 @@ public class FindByIdTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void entity() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         A a1 = xoManager.create(A.class);
         A a2 = xoManager.create(A.class);
+        xoManager.flush();
         Object id1 = xoManager.getId(a1);
         Object id2 = xoManager.getId(a2);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
         assertThat(xoManager.findById(A.class, id1), is(a1));
         assertThat(xoManager.findById(A.class, id2), is(a2));
-        xoManager.currentTransaction().commit();
     }
 
     @Test
     public void relation() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         A a1 = xoManager.create(A.class);
         B b1 = xoManager.create(B.class);
         A2B a2b1 = xoManager.create(a1, A2B.class, b1);
@@ -56,11 +52,9 @@ public class FindByIdTest extends AbstractTinkerPopXOManagerTest {
         A2B a2b2 = xoManager.create(a2, A2B.class, b2);
         Object id1 = xoManager.getId(a2b1);
         Object id2 = xoManager.getId(a2b2);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(xoManager.findById(A2B.class, id1), is(a2b1));
         assertThat(xoManager.findById(A2B.class, id2), is(a2b2));
-        xoManager.currentTransaction().commit();
     }
 
 }

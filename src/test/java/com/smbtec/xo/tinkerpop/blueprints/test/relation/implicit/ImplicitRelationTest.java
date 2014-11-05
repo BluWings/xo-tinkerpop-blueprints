@@ -32,29 +32,24 @@ public class ImplicitRelationTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void oneToOne() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         A a = xoManager.create(A.class);
         B b1 = xoManager.create(B.class);
         a.setOneToOne(b1);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToOne(), equalTo(b1));
         assertThat(b1.getOneToOne(), equalTo(a));
         assertThat(executeQuery("g.V.has('_xo_discriminator_A').outE('implicitOneToOne').inV().has('_xo_discriminator_B')").getColumn("node"), hasItem(b1));
         B b2 = xoManager.create(B.class);
         a.setOneToOne(b2);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToOne(), equalTo(b2));
         assertThat(b2.getOneToOne(), equalTo(a));
         assertThat(b1.getOneToOne(), equalTo(null));
         assertThat(executeQuery("g.V.has('_xo_discriminator_A').outE('implicitOneToOne').inV().has('_xo_discriminator_B')").getColumn("node"), hasItem(b2));
         a.setOneToOne(null);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToOne(), equalTo(null));
         assertThat(b1.getOneToOne(), equalTo(null));
         assertThat(b2.getOneToOne(), equalTo(null));
-        xoManager.currentTransaction().commit();
     }
 }

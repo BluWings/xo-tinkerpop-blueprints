@@ -30,13 +30,10 @@ public class IndexedDemoTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void test() {
         final XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         final Person person1 = xoManager.create(Person.class);
         person1.setName("Peter");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         final Person person2 = xoManager.find(Person.class, "Peter").getSingleResult();
         Assert.assertThat(person2, Matchers.equalTo(person1));
-        xoManager.currentTransaction().commit();
     }
 }

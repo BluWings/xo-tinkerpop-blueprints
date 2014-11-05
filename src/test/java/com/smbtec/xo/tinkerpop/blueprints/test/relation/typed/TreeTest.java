@@ -32,7 +32,6 @@ public class TreeTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void tree() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         TreeNode parent = xoManager.create(TreeNode.class);
         parent.setName("parent");
         TreeNode child1 = xoManager.create(TreeNode.class);
@@ -43,8 +42,7 @@ public class TreeTest extends AbstractTinkerPopXOManagerTest {
         relation1.setVersion(1);
         TreeNodeRelation relation2 = xoManager.create(parent, TreeNodeRelation.class, child2);
         relation2.setVersion(1);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(parent.getParent(), equalTo(null));
         assertThat(parent.getChildren(), hasItems(relation1, relation2));
         assertThat(relation1.getParent(), equalTo(parent));

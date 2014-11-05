@@ -13,9 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
-import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.bootstrap.XOUnit;
@@ -38,12 +36,10 @@ public class QualifiedRelationTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void oneToOne() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         A a = xoManager.create(A.class);
         B b1 = xoManager.create(B.class);
         a.setOneToOne(b1);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToOne(), equalTo(b1));
         assertThat(b1.getOneToOne(), equalTo(a));
         assertThat(
@@ -51,8 +47,7 @@ public class QualifiedRelationTest extends AbstractTinkerPopXOManagerTest {
                         "node"), hasItem(b1));
         B b2 = xoManager.create(B.class);
         a.setOneToOne(b2);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToOne(), equalTo(b2));
         assertThat(b2.getOneToOne(), equalTo(a));
         assertThat(b1.getOneToOne(), equalTo(null));
@@ -60,25 +55,21 @@ public class QualifiedRelationTest extends AbstractTinkerPopXOManagerTest {
                 executeQuery("g.V.has('_xo_discriminator_A').out('OneToOne').has('_xo_discriminator_B')").getColumn(
                         "node"), hasItem(b2));
         a.setOneToOne(null);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToOne(), equalTo(null));
         assertThat(b1.getOneToOne(), equalTo(null));
         assertThat(b2.getOneToOne(), equalTo(null));
-        xoManager.currentTransaction().commit();
     }
 
     @Test
     public void oneToMany() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         A a = xoManager.create(A.class);
         B b1 = xoManager.create(B.class);
         B b2 = xoManager.create(B.class);
         a.getOneToMany().add(b1);
         a.getOneToMany().add(b2);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToMany(), hasItems(b1, b2));
         assertThat(b1.getManyToOne(), equalTo(a));
         assertThat(b2.getManyToOne(), equalTo(a));
@@ -90,8 +81,7 @@ public class QualifiedRelationTest extends AbstractTinkerPopXOManagerTest {
         B b4 = xoManager.create(B.class);
         a.getOneToMany().add(b3);
         a.getOneToMany().add(b4);
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(a.getOneToMany(), hasItems(b3, b4));
         assertThat(b1.getManyToOne(), equalTo(null));
         assertThat(b2.getManyToOne(), equalTo(null));
@@ -99,7 +89,6 @@ public class QualifiedRelationTest extends AbstractTinkerPopXOManagerTest {
         assertThat(b4.getManyToOne(), equalTo(a));
         assertThat(executeQuery("g.V.has('_xo_discriminator_A').out('OneToMany').has('_xo_discriminator_B')")
                 .<B> getColumn("node"), hasItems(b3, b4));
-        xoManager.currentTransaction().commit();
     }
 
     @Test

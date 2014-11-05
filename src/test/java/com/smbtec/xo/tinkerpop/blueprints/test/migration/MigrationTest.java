@@ -32,41 +32,30 @@ public class MigrationTest extends AbstractTinkerPopXOManagerTest {
 
     @Test
     public void downCast() {
-        XOManager xoManager = getXoManagerFactory().createXOManager();
-        xoManager.currentTransaction().begin();
+        XOManager xoManager = getXoManager();
         A a = xoManager.create(A.class);
         a.setValue("Value");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
         B b = xoManager.migrate(a, B.class);
+        xoManager.flush();
         assertThat(a == b, equalTo(false));
         assertThat(b.getValue(), equalTo("Value"));
-        xoManager.currentTransaction().commit();
-        xoManager.close();
     }
 
     @Test
     public void compositeObject() {
-        XOManager xoManager = getXoManagerFactory().createXOManager();
-        xoManager.currentTransaction().begin();
+        XOManager xoManager = getXoManager();
         A a = xoManager.create(A.class);
         a.setValue("Value");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
         B b = xoManager.migrate(a, B.class, D.class).as(B.class);
+        xoManager.flush();
         assertThat(b.getValue(), equalTo("Value"));
-        xoManager.currentTransaction().commit();
-        xoManager.close();
     }
 
     @Test
     public void migrationHandler() {
-        XOManager xoManager = getXoManagerFactory().createXOManager();
-        xoManager.currentTransaction().begin();
+        XOManager xoManager = getXoManager();
         A a = xoManager.create(A.class);
         a.setValue("Value");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
         XOManager.MigrationStrategy<A, C> migrationStrategy = new XOManager.MigrationStrategy<A, C>() {
             @Override
             public void migrate(A instance, C target) {
@@ -74,19 +63,15 @@ public class MigrationTest extends AbstractTinkerPopXOManagerTest {
             }
         };
         C c = xoManager.migrate(a, migrationStrategy, C.class);
+        xoManager.flush();
         assertThat(c.getName(), equalTo("Value"));
-        xoManager.currentTransaction().commit();
-        xoManager.close();
     }
 
     @Test
     public void compositeObjectMigrationHandler() {
-        XOManager xoManager = getXoManagerFactory().createXOManager();
-        xoManager.currentTransaction().begin();
+        XOManager xoManager = getXoManager();
         A a = xoManager.create(A.class);
         a.setValue("Value");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
         XOManager.MigrationStrategy<A, C> migrationStrategy = new XOManager.MigrationStrategy<A, C>() {
             @Override
             public void migrate(A instance, C target) {
@@ -94,8 +79,7 @@ public class MigrationTest extends AbstractTinkerPopXOManagerTest {
             }
         };
         C c = xoManager.migrate(a, migrationStrategy, C.class, D.class).as(C.class);
+        xoManager.flush();
         assertThat(c.getName(), equalTo("Value"));
-        xoManager.currentTransaction().commit();
-        xoManager.close();
     }
 }

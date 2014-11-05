@@ -34,7 +34,6 @@ public class RelationSubclassingTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void testRelationSubclassing() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         C c = xoManager.create(C.class);
         D d1 = xoManager.create(D.class);
         D d2 = xoManager.create(D.class);
@@ -42,16 +41,13 @@ public class RelationSubclassingTest extends AbstractTinkerPopXOManagerTest {
         relation1.setVersion(1);
         BaseType relation2 = xoManager.create(c, TypeB.class, d2);
         relation2.setVersion(2);
-        xoManager.currentTransaction().commit();
-
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         assertThat(c.getTypeA().getVersion(), equalTo(relation1.getVersion()));
         assertThat(c.getTypeB().getVersion(), equalTo(relation2.getVersion()));
         assertThat(relation1.getC(), equalTo(c));
         assertThat(relation1.getD(), equalTo(d1));
         assertThat(relation2.getC(), equalTo(c));
         assertThat(relation2.getD(), equalTo(d2));
-        xoManager.currentTransaction().commit();
     }
 
 }

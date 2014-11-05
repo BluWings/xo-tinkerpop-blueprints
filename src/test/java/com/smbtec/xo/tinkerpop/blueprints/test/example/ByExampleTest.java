@@ -34,7 +34,6 @@ public class ByExampleTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void createByExample() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         // java 7: anonymous inner class
         A a1 = xoManager.create(new Example<A>() {
             @Override
@@ -43,6 +42,7 @@ public class ByExampleTest extends AbstractTinkerPopXOManagerTest {
                 example.setName("Name of A1");
             }
         }, A.class);
+        xoManager.flush();
         assertThat(a1.getValue(), equalTo("A1"));
         assertThat(a1.getName(), equalTo("Name of A1"));
         // java 8: lambda expression
@@ -50,15 +50,13 @@ public class ByExampleTest extends AbstractTinkerPopXOManagerTest {
             example.setValue("A2");
             example.setName("Name of A2");
         }, A.class);
+        xoManager.flush();
         assertThat(a2.getValue(), equalTo("A2"));
         assertThat(a2.getName(), equalTo("Name of A2"));
         // Create a relation
         Parent parent = xoManager.create(example -> example.setName("Name of A1->A2"), a1, Parent.class, a2);
+        xoManager.flush();
         assertThat(parent.getName(), equalTo("Name of A1->A2"));
-
-        xoManager.currentTransaction().commit();
-
-        xoManager.currentTransaction().begin();
         // java 7: anonymous inner class
         assertThat(xoManager.find(new Example<A>() {
             @Override
@@ -70,13 +68,11 @@ public class ByExampleTest extends AbstractTinkerPopXOManagerTest {
         assertThat(xoManager.find(example -> example.setValue("A1"), A.class).getSingleResult(), equalTo(a1));
         assertThat(xoManager.find(example -> example.setValue("A2"), A.class).getSingleResult().getParent().getName(),
                 equalTo("Name of A1->A2"));
-        xoManager.currentTransaction().commit();
     }
 
     @Test
     public void findCompositeByExample() {
         XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         // java 7: anonymous inner class
         CompositeObject compositeObject1 = xoManager.<CompositeObject> create(new Example<CompositeObject>() {
             @Override
@@ -84,11 +80,10 @@ public class ByExampleTest extends AbstractTinkerPopXOManagerTest {
                 example.as(A.class).setValue("A1");
             }
         }, A.class, B.class);
+        xoManager.flush();
         // java 8: lambda expression
         xoManager.<CompositeObject> create(example -> example.as(A.class).setValue("A2"), A.class, B.class);
-        xoManager.currentTransaction().commit();
-
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         // java 7: anonymous inner class
         assertThat(xoManager.find(new Example<CompositeObject>() {
             @Override
@@ -99,6 +94,5 @@ public class ByExampleTest extends AbstractTinkerPopXOManagerTest {
         // java 8: lambda expression
         assertThat(xoManager.find(example -> example.as(A.class).setValue("A1"), A.class, B.class).getSingleResult(),
                 equalTo(compositeObject1));
-
     }
 }

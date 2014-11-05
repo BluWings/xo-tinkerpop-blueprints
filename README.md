@@ -14,7 +14,7 @@ You'll need to add the following dependency in your builds (and Maven will autom
     <dependency>
       <groupId>com.smb-tec.xo</groupId>
       <artifactId>xo-tinkerpop-blueprints</artifactId>
-      <version>0.0.4-SNAPSHOT</version>  
+      <version>0.0.4-SNAPSHOT</version>
     </dependency>
 ```
 
@@ -46,27 +46,31 @@ public interface Student extends Person {
 }
 
 // persist an entity
-xoManager.currentTransaction().begin();
 Student student = xoManager.create(Student.class);
 student.setRegNumber(123456L);
 student.setName("John Doe");
-xoManager.currentTransaction().commit();
+xoManager.flush();
 
 // find an entity and modify attributes
-xoManager.currentTransaction().begin();
 Person johnDoe = xoManager
     .find("John Doe", Person.class)
     .getSingleResult;
 johnDoe.setName("John Doe Jr.");
-xoManager.currentTransaction().commit();
+xoManager.flush();
 
 // use Gremlin query
-xoManager.currentTransaction().begin();
 Student johnDoe = xoManager
     .createQuery("g.V('name','John Doe Jr.')", Student.class)
     .execute()
     .getSingleResult();
-xoManager.currentTransaction().commit();
+
+// use TinkerPop repository for more advanced features
+TinkerPopRepository repo = xoManager.getRepository(TinkerPopRepository.class);
+ResultIterable<Person> persons = repo.findAll(Person.class);
+for (Person person : person) {
+    String name = person.getName();
+}
+
 ```
 
 Getting Help
