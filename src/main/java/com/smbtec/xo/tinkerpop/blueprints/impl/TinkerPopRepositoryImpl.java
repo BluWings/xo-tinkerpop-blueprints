@@ -25,9 +25,10 @@ import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.spi.metadata.type.EntityTypeMetadata;
 import com.buschmais.xo.spi.session.XOSession;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopRepository;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -38,10 +39,11 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public class TinkerPopRepositoryImpl implements TinkerPopRepository {
 
-    private XOSession xoSession;
+    private XOSession<?, ?, VertexMetadata, ?, ?, ?, ?, EdgeMetadata, ?> xoSession;
+
     private Graph graph;
 
-    public TinkerPopRepositoryImpl(Graph graph, XOSession xoSession) {
+    public TinkerPopRepositoryImpl(Graph graph, XOSession<?, ?, VertexMetadata, ?, ?, ?, ?, EdgeMetadata, ?> xoSession) {
         this.graph = graph;
         this.xoSession = xoSession;
     }
@@ -50,35 +52,78 @@ public class TinkerPopRepositoryImpl implements TinkerPopRepository {
     public <T> ResultIterable<T> findAll(Class<T> type) {
         EntityTypeMetadata<VertexMetadata> entityTypeMetadata = xoSession.getEntityMetadata(type);
         String label = entityTypeMetadata.getDatastoreMetadata().getDiscriminator();
-        Iterable<Vertex> vertices = graph.query().has(TinkerPopVertexManager.getDiscriminatorPropertyKey(label)).vertices();
+        Iterable<Vertex> vertices = graph.query().has(TinkerPopVertexManager.getDiscriminatorPropertyKey(label))
+                .vertices();
         final Iterator<Vertex> iterator = vertices.iterator();
-        return xoSession.toResult(new ResultIterator<Vertex>() {
-
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public Vertex next() {
-                return iterator.next();
-            }
-
-            @Override
-            public void remove() {
-            }
-
-            @Override
-            public void close() {
-            }
-        });
+        return xoSession.toResult(new VertexResultIterator(iterator));
     }
 
     @Override
     public <T> long count(Class<T> type) {
         EntityTypeMetadata<VertexMetadata> entityTypeMetadata = xoSession.getEntityMetadata(type);
         String label = entityTypeMetadata.getDatastoreMetadata().getDiscriminator();
-        Iterable<Vertex> vertices = graph.query().has(TinkerPopVertexManager.getDiscriminatorPropertyKey(label)).vertices();
+        Iterable<Vertex> vertices = graph.query().has(TinkerPopVertexManager.getDiscriminatorPropertyKey(label))
+                .vertices();
         return Iterables.size(vertices);
+    }
+
+    @Override
+    public ResultIterable<?> vertices() {
+        Iterable<Vertex> vertices = graph.getVertices();
+        Iterator<Vertex> iterator = vertices.iterator();
+        return xoSession.toResult(new VertexResultIterator(iterator));
+    }
+
+    @Override
+    public ResultIterable<?> edges() {
+        Iterable<Edge> edges = graph.getEdges();
+        Iterator<Edge> iterator = edges.iterator();
+        return xoSession.toResult(new EdgeResultIterator(iterator));
+    }
+
+    private static class VertexResultIterator implements ResultIterator<Vertex> {
+
+        private Iterator<Vertex> iterator;
+
+        public VertexResultIterator(Iterator<Vertex> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Vertex next() {
+            return iterator.next();
+        }
+
+        @Override
+        public void close() {
+        }
+    }
+
+    private static class EdgeResultIterator implements ResultIterator<Edge> {
+
+        private Iterator<Edge> iterator;
+
+        public EdgeResultIterator(Iterator<Edge> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Edge next() {
+            return iterator.next();
+        }
+
+        @Override
+        public void close() {
+        }
     }
 }

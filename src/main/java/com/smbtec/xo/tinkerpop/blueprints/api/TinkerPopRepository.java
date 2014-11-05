@@ -49,4 +49,18 @@ public interface TinkerPopRepository {
      */
     <T> long count(Class<T> type);
 
+    /**
+     * Return an iterable to all entity instances in the graph.
+     *
+     * @return An {@link Iterable} returning all entity instances.
+     */
+    ResultIterable<?> vertices();
+
+    /**
+     * Return an iterable to all relationship instances in the graph.
+     *
+     * @return An {@link Iterable} returning relationship instances.
+     */
+    ResultIterable<?> edges();
+
 }
