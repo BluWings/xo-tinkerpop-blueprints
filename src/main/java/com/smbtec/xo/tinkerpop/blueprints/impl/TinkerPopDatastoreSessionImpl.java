@@ -25,7 +25,6 @@ import com.buschmais.xo.spi.datastore.DatastoreEntityManager;
 import com.buschmais.xo.spi.datastore.DatastoreQuery;
 import com.buschmais.xo.spi.datastore.DatastoreRelationManager;
 import com.buschmais.xo.spi.datastore.DatastoreTransaction;
-import com.buschmais.xo.spi.metadata.type.RepositoryTypeMetadata;
 import com.buschmais.xo.spi.session.XOSession;
 import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
 import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Gremlin;
@@ -60,9 +59,8 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
     public DatastoreTransaction getDatastoreTransaction() {
         if (graph.getFeatures().supportsTransactions) {
             return new TinkerPopTransaction((TransactionalGraph) graph);
-        } else {
-            return new DefaultTransaction();
         }
+        return null;
     }
 
     @Override
