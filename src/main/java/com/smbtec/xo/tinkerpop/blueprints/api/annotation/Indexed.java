@@ -18,6 +18,9 @@
  */
 package com.smbtec.xo.tinkerpop.blueprints.api.annotation;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,6 +41,15 @@ import com.buschmais.xo.spi.annotation.IndexDefinition;
 @Target(ElementType.METHOD)
 public @interface Indexed {
 
-    boolean unique() default false;
+    Parameter[] parameters() default {};
+
+    @Retention(RUNTIME)
+    @Target({ ANNOTATION_TYPE })
+    public @interface Parameter {
+
+        String key();
+
+        String value();
+    }
 
 }

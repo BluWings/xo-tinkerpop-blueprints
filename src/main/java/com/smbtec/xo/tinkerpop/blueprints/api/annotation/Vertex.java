@@ -45,14 +45,4 @@ public @interface Vertex {
      */
     String value() default "";
 
-    /**
-     * @return The (super) type containing an indexed property ({@link Indexed}
-     *         ).
-     *         <p>
-     *         An index will be created for this label and the indexed property
-     *         and used by {@link XOManager#find(Class, Object)}.
-     *         </p>
-     */
-    Class<?> usingIndexedPropertyOf() default Object.class;
-
 }

@@ -27,7 +27,6 @@ import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.spi.datastore.DatastoreEntityManager;
 import com.buschmais.xo.spi.datastore.TypeMetadataSet;
-import com.buschmais.xo.spi.metadata.method.IndexedPropertyMethodMetadata;
 import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
 import com.buschmais.xo.spi.metadata.type.EntityTypeMetadata;
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
@@ -111,14 +110,6 @@ public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager<Ver
         }
         Map.Entry<PrimitivePropertyMethodMetadata<PropertyMetadata>, Object> entry = values.entrySet().iterator().next();
         PrimitivePropertyMethodMetadata<PropertyMetadata> propertyMethodMetadata = entry.getKey();
-        if (propertyMethodMetadata == null) {
-            IndexedPropertyMethodMetadata<?> indexedProperty = entityTypeMetadata.getDatastoreMetadata().getIndexedProperty();
-            if (indexedProperty == null) {
-                throw new XOException("Type " + entityTypeMetadata.getAnnotatedType().getAnnotatedElement().getName()
-                        + " has no indexed property.");
-            }
-            propertyMethodMetadata = indexedProperty.getPropertyMethodMetadata();
-        }
         PropertyMetadata propertyMetadata = propertyMethodMetadata.getDatastoreMetadata();
         Object value = entry.getValue();
 

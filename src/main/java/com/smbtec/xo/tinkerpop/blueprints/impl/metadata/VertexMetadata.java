@@ -30,21 +30,15 @@ import com.buschmais.xo.spi.metadata.method.IndexedPropertyMethodMetadata;
 public class VertexMetadata implements DatastoreEntityMetadata<String> {
 
     private final String discriminator;
-    private final IndexedPropertyMethodMetadata<?> indexedProperty;
 
-    public VertexMetadata(final String discriminator, final IndexedPropertyMethodMetadata<?> indexedProperty) {
+    public VertexMetadata(final String discriminator) {
         super();
         this.discriminator = discriminator;
-        this.indexedProperty = indexedProperty;
     }
 
     @Override
     public String getDiscriminator() {
         return discriminator;
-    }
-
-    public IndexedPropertyMethodMetadata<?> getIndexedProperty() {
-        return indexedProperty;
     }
 
 }

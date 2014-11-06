@@ -18,6 +18,9 @@
  */
 package com.smbtec.xo.tinkerpop.blueprints.impl.metadata;
 
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Parameter;
+
 /**
  *
  * @author Lars Martin - lars.martin@smb-tec.com
@@ -28,12 +31,30 @@ public class PropertyMetadata {
 
     private final String name;
 
+    private Class<? extends Element> elementType;
+
+    private Parameter<String, String>[] parameters;
+
     public PropertyMetadata(final String name) {
         this.name = name;
     }
 
+    public PropertyMetadata(String name, Class<? extends Element> elementType, Parameter<String, String>[] parameters) {
+        this(name);
+        this.elementType = elementType;
+        this.parameters = parameters;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public Class<? extends Element> getElementType() {
+        return elementType;
+    }
+
+    public Parameter<String, String>[] getParameters() {
+        return parameters;
     }
 
 }

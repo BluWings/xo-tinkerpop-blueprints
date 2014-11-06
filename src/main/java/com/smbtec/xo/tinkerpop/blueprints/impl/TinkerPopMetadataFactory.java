@@ -44,6 +44,7 @@ import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.ReferencePropertyMetadat
 import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Parameter;
 
 /**
  *
@@ -57,19 +58,13 @@ public class TinkerPopMetadataFactory implements DatastoreMetadataFactory<Vertex
     public VertexMetadata createEntityMetadata(final AnnotatedType annotatedType, final Map<Class<?>, TypeMetadata> metadataByType) {
         final Vertex annotation = annotatedType.getAnnotation(Vertex.class);
         String value = null;
-        IndexedPropertyMethodMetadata<?> indexedProperty = null;
         if (annotation != null) {
             value = annotation.value();
             if ((value == null) || (value.isEmpty())) {
                 value = annotatedType.getName();
             }
-            final Class<?> usingIndexOf = annotation.usingIndexedPropertyOf();
-            if (!Object.class.equals(usingIndexOf)) {
-                final TypeMetadata typeMetadata = metadataByType.get(usingIndexOf);
-                indexedProperty = typeMetadata.getIndexedProperty();
-            }
         }
-        return new VertexMetadata(value, indexedProperty);
+        return new VertexMetadata(value);
     }
 
     @Override
@@ -95,25 +90,27 @@ public class TinkerPopMetadataFactory implements DatastoreMetadataFactory<Vertex
     public PropertyMetadata createPropertyMetadata(final PropertyMethod propertyMethod) {
         final Property property = propertyMethod.getAnnotationOfProperty(Property.class);
         final String name = property != null ? property.value() : propertyMethod.getName();
-        return new PropertyMetadata(name);
+        final Indexed indexedAnnotation = propertyMethod.getAnnotation(Indexed.class);
+        if (indexedAnnotation != null) {
+            final Class<?> declaringClass = propertyMethod.getAnnotatedElement().getDeclaringClass();
+            Class<? extends Element> type = null;
+            if (declaringClass.getAnnotation(Vertex.class) != null) {
+                type = com.tinkerpop.blueprints.Vertex.class;
+            } else if (declaringClass.getAnnotation(Edge.class) != null) {
+                type = com.tinkerpop.blueprints.Edge.class;
+            } else {
+                throw new XOException("Property '" + name
+                        + "' was found with index annotation, but the declaring type is neither a vertex nor an edge.");
+            }
+            return new PropertyMetadata(name, type, getIndexParameter(indexedAnnotation.parameters()));
+        } else {
+            return new PropertyMetadata(name);
+        }
     }
 
     @Override
     public IndexedPropertyMetadata createIndexedPropertyMetadata(final PropertyMethod propertyMethod) {
-        final String name = propertyMethod.getName();
-        final Class<?> declaringClass = propertyMethod.getAnnotatedElement().getDeclaringClass();
-        Class<? extends Element> type = null;
-        if (declaringClass.getAnnotation(Vertex.class) != null) {
-            type = com.tinkerpop.blueprints.Vertex.class;
-        } else if (declaringClass.getAnnotation(Edge.class) != null) {
-            type = com.tinkerpop.blueprints.Edge.class;
-        } else {
-            throw new XOException("Property '" + name + "' was found with index annotation, but the declaring type is neither a vertex nor an edge.");
-        }
-        final Indexed indexedAnnotation = propertyMethod.getAnnotation(Indexed.class);
-        final boolean unique = indexedAnnotation.unique();
-        final Class<?> dataType = propertyMethod.getType();
-        return new IndexedPropertyMetadata(name, unique, dataType, type);
+        return null;
     }
 
     @Override
@@ -135,6 +132,16 @@ public class TinkerPopMetadataFactory implements DatastoreMetadataFactory<Vertex
             name = StringUtils.uncapitalize(annotatedElement.getName());
         }
         return new EdgeMetadata(name);
+    }
+
+    private Parameter<String, String>[] getIndexParameter(com.smbtec.xo.tinkerpop.blueprints.api.annotation.Indexed.Parameter[] parameters) {
+        Parameter<String, String>[] indexParameters = new Parameter[parameters.length];
+        int i = 0;
+        for (com.smbtec.xo.tinkerpop.blueprints.api.annotation.Indexed.Parameter parameter : parameters) {
+            indexParameters[i] = new Parameter<String, String>(parameter.key(), parameter.value());
+            i++;
+        }
+        return indexParameters;
     }
 
     private String determinePropertyName(final PropertyMethod propertyMethod) {
