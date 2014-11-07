@@ -1,6 +1,7 @@
 package com.smbtec.xo.tinkerpop.blueprints.impl;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 
@@ -28,8 +29,7 @@ public class TinkerPopDatastore implements Datastore<TinkerPopDatastoreSession<G
     }
 
     @Override
-    public void init(final Collection<TypeMetadata> registeredMetadata) {
-        // handle indices
+    public void init(Map<Class<?>, TypeMetadata> registeredMetadata) {
     }
 
     @Override
