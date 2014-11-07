@@ -97,8 +97,8 @@ public class TinkerPopDatastore implements Datastore<TinkerPopDatastoreSession<G
         if (elementType != null) {
             String propertyName = datastoreMetadata.getName();
             Parameter<String, String>[] parameters = datastoreMetadata.getParameters();
-            LOGGER.info("Creating key index for type {}({}) on property '{}' with parameters {}.", discriminator,
-                    elementType.getSimpleName(), propertyName, parameters);
+            LOGGER.info("Creating key index for type {}({}) on property '{}' with parameters {}.", elementType.getSimpleName(),
+                    discriminator, propertyName, parameters);
             ((KeyIndexableGraph) graph).createKeyIndex(propertyName, elementType, parameters);
         }
     }

@@ -19,7 +19,6 @@
 package com.smbtec.xo.tinkerpop.blueprints.impl.metadata;
 
 import com.buschmais.xo.spi.datastore.DatastoreEntityMetadata;
-import com.buschmais.xo.spi.metadata.method.IndexedPropertyMethodMetadata;
 
 /**
  *
