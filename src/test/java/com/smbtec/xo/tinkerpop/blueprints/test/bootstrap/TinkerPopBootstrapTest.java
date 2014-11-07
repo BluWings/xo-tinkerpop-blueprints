@@ -8,23 +8,22 @@ import com.buschmais.xo.api.bootstrap.XO;
 import com.smbtec.xo.tinkerpop.blueprints.test.bootstrap.composite.A;
 
 /**
- * 
+ *
  * @author Lars Martin - lars.martin@smb-tec.com
  * @author Dirk Mahler
- * 
+ *
  */
 public class TinkerPopBootstrapTest {
 
-	@Test
-	public void bootstrap() {
-		XOManagerFactory xoManagerFactory = XO.createXOManagerFactory("TinkerGraph");
-		XOManager xoManager = xoManagerFactory.createXOManager();
-		xoManager.currentTransaction().begin();
-		A a = xoManager.create(A.class);
-		a.setName("Test");
-		xoManager.currentTransaction().commit();
-		xoManager.close();
-		xoManagerFactory.close();
-	}
+    @Test
+    public void bootstrap() {
+        XOManagerFactory xoManagerFactory = XO.createXOManagerFactory("TinkerGraph");
+        XOManager xoManager = xoManagerFactory.createXOManager();
+        A a = xoManager.create(A.class);
+        a.setName("Test");
+        xoManager.flush();
+        xoManager.close();
+        xoManagerFactory.close();
+    }
 
 }

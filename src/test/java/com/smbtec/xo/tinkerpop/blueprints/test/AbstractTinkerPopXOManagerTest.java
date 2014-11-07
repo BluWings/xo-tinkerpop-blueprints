@@ -29,11 +29,12 @@ public abstract class AbstractTinkerPopXOManagerTest extends com.buschmais.xo.te
     @Override
     protected void dropDatabase() {
         TinkerPopDatastoreSession session = getXoManager().getDatastoreSession(TinkerPopDatastoreSession.class);
-        Iterable<Edge> edges = session.getGraph().getEdges();
+        Graph graph = session.getGraph();
+        Iterable<Edge> edges = graph.getEdges();
         for (Edge edge : edges) {
             edge.remove();
         }
-        Iterable<Vertex> vertices = session.getGraph().getVertices();
+        Iterable<Vertex> vertices = graph.getVertices();
         for (Vertex vertex : vertices) {
             vertex.remove();
         }

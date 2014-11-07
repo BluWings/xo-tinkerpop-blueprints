@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -116,11 +117,14 @@
                             <archive>
                                 <manifestEntries>
                                     <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
-                                    <Bundle-Name>${project.name} (Source)</Bundle-Name>
+                                    <Bundle-Name>${project.name}
+                                        (Source)</Bundle-Name>
                                     <Bundle-SymbolicName>${bundle.name}.source</Bundle-SymbolicName>
                                     <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                                    <Bundle-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${build.timestamp}</Bundle-Version>
-                                    <Eclipse-SourceBundle>${bundle.name};version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${build.timestamp}";roots:="."</Eclipse-SourceBundle>
+                                    <Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
+                                    <Eclipse-SourceBundle>
+                                        ${bundle.name};version="${parsedVersion.osgiVersion}";roots:="."
+                                    </Eclipse-SourceBundle>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -145,8 +149,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -173,18 +177,32 @@
                         </goals>
                         <configuration>
                             <instructions>
-                                <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
-                                <Bundle-Name>${project.name}</Bundle-Name>
-                                <Bundle-DocURL>${project.url}</Bundle-DocURL>
-                                <Bundle-RequiredExecutionEnvironment>JavaSE-1.7</Bundle-RequiredExecutionEnvironment>
-                                <Bundle-SymbolicName>com.smb-tec.xo.tinkerpop-blueprints</Bundle-SymbolicName>
                                 <DynamicImport-Package>*</DynamicImport-Package>
-                                <Export-Package>
-                                    com.smbtec.xo.tinkerpop.blueprints.api.*;version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"
-                                </Export-Package>
-                                <_snapshot>${maven.build.timestamp}</_snapshot>
-                                <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
-                                </instructions>
+                                <Bundle-Name>${project.name}</Bundle-Name>
+                            </instructions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.0.5</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>1.8</version>
+                                </requireJavaVersion>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
@@ -203,11 +221,6 @@
         <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.spi</artifactId>
-            <version>${com.buschmais.xo_version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.impl</artifactId>
             <version>${com.buschmais.xo_version}</version>
         </dependency>
         <!-- TinkerPop Blueprints API -->
@@ -233,9 +246,13 @@
             <version>${com.buschmais.xo_version}</version>
         </dependency>
         <!-- <dependency> <groupId>com.orientechnologies</groupId> <artifactId>orientdb-graphdb</artifactId>
-            <version>1.7-rc2</version> <scope>test</scope> </dependency> <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId> <artifactId>blueprints-neo4j-graph</artifactId>
-            <version>2.5.0</version> <scope>test</scope> </dependency> -->
+            <version>1.7-rc2</version> <scope>test</scope> </dependency> <dependency> -->
+        <dependency>
+            <groupId>com.tinkerpop.blueprints</groupId>
+            <artifactId>blueprints-neo4j-graph</artifactId>
+            <version>${com.tinkerpop.blueprints_version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -266,14 +283,13 @@
     <url>http://www.github.com/BluWings/xo-tinkerpop-blueprints</url>
     <inceptionYear>2014</inceptionYear>
 
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
 
     <properties>
-        <com.tinkerpop.blueprints_version>2.5.0</com.tinkerpop.blueprints_version>
+        <com.tinkerpop.blueprints_version>2.6.0</com.tinkerpop.blueprints_version>
         <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
-        <bundle.name>com.smb-tec.xo.tinkerpop-blueprints</bundle.name>
+        <bundle.name>com.smb-tec.xo.${project.artifactId}</bundle.name>
         <neo4j.version>1.9.6</neo4j.version>
-        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     </properties>
 
     <issueManagement>

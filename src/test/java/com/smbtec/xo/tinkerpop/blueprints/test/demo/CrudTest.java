@@ -32,21 +32,15 @@ public class CrudTest extends AbstractTinkerPopXOManagerTest {
     @Test
     public void create() {
         final XOManager xoManager = getXoManager();
-        xoManager.currentTransaction().begin();
         A a = xoManager.create(A.class);
         a.setName("Foo");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
+        xoManager.flush();
         a = xoManager.find(A.class, "Foo").getSingleResult();
         assertThat(a.getName(), equalTo("Foo"));
         a.setName("Bar");
-        xoManager.currentTransaction().commit();
-        xoManager.currentTransaction().begin();
-
+        xoManager.flush();
         A match = xoManager.createQuery("g.v(0)", A.class).execute().getSingleResult();
         assertThat(a, notNullValue());
-
-        xoManager.currentTransaction().commit();
     }
 
     @Vertex("A")
