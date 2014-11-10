@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.buschmais.xo.api.XOException;
 import com.buschmais.xo.spi.datastore.DatastoreMetadataFactory;
-import com.buschmais.xo.spi.metadata.method.IndexedPropertyMethodMetadata;
 import com.buschmais.xo.spi.metadata.type.TypeMetadata;
 import com.buschmais.xo.spi.reflection.AnnotatedElement;
 import com.buschmais.xo.spi.reflection.AnnotatedMethod;
