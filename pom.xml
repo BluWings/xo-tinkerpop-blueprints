@@ -278,14 +278,18 @@
             <artifactId>gremlin-groovy</artifactId>
             <version>${com.tinkerpop.blueprints_version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
         <!-- test dependencies -->
         <dependency>
             <groupId>com.buschmais.xo</groupId>
             <artifactId>xo.test</artifactId>
             <version>${com.buschmais.xo_version}</version>
+            <scope>test</scope>
         </dependency>
-        <!-- <dependency> <groupId>com.orientechnologies</groupId> <artifactId>orientdb-graphdb</artifactId>
-            <version>1.7-rc2</version> <scope>test</scope> </dependency> <dependency> -->
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
             <artifactId>blueprints-neo4j-graph</artifactId>
