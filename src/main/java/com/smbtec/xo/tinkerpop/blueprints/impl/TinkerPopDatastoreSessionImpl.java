@@ -69,6 +69,7 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <QL extends Annotation> DatastoreQuery<QL> createQuery(final Class<QL> queryLanguage) {
         if (Gremlin.class.equals(queryLanguage)) {
             return (DatastoreQuery<QL>) new GremlinQuery(this);
@@ -78,6 +79,7 @@ public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession<
 
     @Override
     public void close() {
+        // intentionally left blank
     }
 
     @Override

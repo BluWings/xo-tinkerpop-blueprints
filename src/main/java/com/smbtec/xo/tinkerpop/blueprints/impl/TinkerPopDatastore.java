@@ -59,16 +59,14 @@ public class TinkerPopDatastore implements Datastore<TinkerPopDatastoreSession<G
     @Override
     public void init(Map<Class<?>, TypeMetadata> registeredMetadata) {
         for (TypeMetadata typeMetadata : registeredMetadata.values()) {
-            if (typeMetadata instanceof EntityTypeMetadata) {
-                if (graph.getFeatures().supportsKeyIndices) {
-                    @SuppressWarnings("unchecked")
-                    EntityTypeMetadata<VertexMetadata> entityTypeMetadata = (EntityTypeMetadata<VertexMetadata>) typeMetadata;
-                    for (MethodMetadata<?, ?> methodMetadata : entityTypeMetadata.getProperties()) {
-                        if (methodMetadata instanceof PrimitivePropertyMethodMetadata<?>) {
-                            @SuppressWarnings("unchecked")
-                            PrimitivePropertyMethodMetadata<PropertyMetadata> propertyMetadata = (PrimitivePropertyMethodMetadata<PropertyMetadata>) methodMetadata;
-                            ensureIndex(entityTypeMetadata.getDatastoreMetadata().getDiscriminator(), propertyMetadata);
-                        }
+            if (typeMetadata instanceof EntityTypeMetadata && graph.getFeatures().supportsKeyIndices) {
+                @SuppressWarnings("unchecked")
+                EntityTypeMetadata<VertexMetadata> entityTypeMetadata = (EntityTypeMetadata<VertexMetadata>) typeMetadata;
+                for (MethodMetadata<?, ?> methodMetadata : entityTypeMetadata.getProperties()) {
+                    if (methodMetadata instanceof PrimitivePropertyMethodMetadata<?>) {
+                        @SuppressWarnings("unchecked")
+                        PrimitivePropertyMethodMetadata<PropertyMetadata> propertyMetadata = (PrimitivePropertyMethodMetadata<PropertyMetadata>) methodMetadata;
+                        ensureIndex(entityTypeMetadata.getDatastoreMetadata().getDiscriminator(), propertyMetadata);
                     }
                 }
             }

@@ -101,6 +101,7 @@ public class TinkerPopRepositoryImpl implements TinkerPopRepository {
 
         @Override
         public void close() {
+            // intentionally left blank
         }
     }
 
@@ -124,6 +125,7 @@ public class TinkerPopRepositoryImpl implements TinkerPopRepository {
 
         @Override
         public void close() {
+            // intentionally left blank
         }
     }
 }

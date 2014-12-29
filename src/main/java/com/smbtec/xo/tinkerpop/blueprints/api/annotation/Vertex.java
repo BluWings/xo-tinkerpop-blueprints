@@ -23,7 +23,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.spi.annotation.EntityDefinition;
 
 /**
