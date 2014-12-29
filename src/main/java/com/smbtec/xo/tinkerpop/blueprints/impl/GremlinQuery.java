@@ -161,6 +161,7 @@ public class GremlinQuery implements DatastoreQuery<Gremlin> {
 
         @Override
         public void close() {
+            // intentionally left blank
         }
 
         @Override
