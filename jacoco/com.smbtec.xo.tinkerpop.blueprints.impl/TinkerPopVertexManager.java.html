@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TinkerPopVertexManager.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eXtended Objects - TinkerPop Blueprints Binding</a> &gt; <a href="index.source.html" class="el_package">com.smbtec.xo.tinkerpop.blueprints.impl</a> &gt; <span class="el_source">TinkerPopVertexManager.java</span></div><h1>TinkerPopVertexManager.java</h1><pre class="source lang-java linenums">/*
+ * eXtended Objects - Tinkerpop Blueprints Binding
+ *
+ * Copyright (C) 2014 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.smbtec.xo.tinkerpop.blueprints.impl;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import com.buschmais.xo.api.ResultIterator;
+import com.buschmais.xo.api.XOException;
+import com.buschmais.xo.spi.datastore.DatastoreEntityManager;
+import com.buschmais.xo.spi.datastore.TypeMetadataSet;
+import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
+import com.buschmais.xo.spi.metadata.type.EntityTypeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.GraphQuery;
+import com.tinkerpop.blueprints.Vertex;
+
+/**
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ *
+ */
+public class TinkerPopVertexManager extends AbstractTinkerPopPropertyManager&lt;Vertex&gt; implements
+        DatastoreEntityManager&lt;Object, Vertex, VertexMetadata, String, PropertyMetadata&gt; {
+
+    /**
+     * This constant contains the prefix for discriminator properties.
+     */
+    public static final String XO_DISCRIMINATORS_PROPERTY = &quot;_xo_discriminator_&quot;;
+
+    private final Graph graph;
+
+<span class="fc" id="L53">    public TinkerPopVertexManager(Graph graph) {</span>
+<span class="fc" id="L54">        this.graph = graph;</span>
+<span class="fc" id="L55">    }</span>
+
+    @Override
+    public boolean isEntity(Object o) {
+<span class="fc" id="L59">        return Vertex.class.isAssignableFrom(o.getClass());</span>
+    }
+
+    @Override
+    public Set&lt;String&gt; getEntityDiscriminators(Vertex entity) {
+<span class="fc" id="L64">        final Set&lt;String&gt; discriminators = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (final String key : entity.getPropertyKeys()) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            if (key.startsWith(XO_DISCRIMINATORS_PROPERTY)) {</span>
+<span class="fc" id="L67">                final String discriminator = entity.getProperty(key);</span>
+<span class="fc" id="L68">                discriminators.add(discriminator);</span>
+            }
+<span class="fc" id="L70">        }</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (discriminators.isEmpty()) {</span>
+<span class="nc" id="L72">            throw new XOException(&quot;A vertex was found without discriminators. Does another framework alter the database?&quot;);</span>
+        }
+<span class="fc" id="L74">        return discriminators;</span>
+    }
+
+    @Override
+    public Object getEntityId(Vertex entity) {
+<span class="fc" id="L79">        return entity.getId();</span>
+    }
+
+    @Override
+    public Vertex findEntityById(EntityTypeMetadata&lt;VertexMetadata&gt; metadata, String discriminator, Object id) {
+<span class="fc" id="L84">        return graph.getVertex(id);</span>
+    }
+
+    @Override
+    public Vertex createEntity(TypeMetadataSet&lt;EntityTypeMetadata&lt;VertexMetadata&gt;&gt; types, Set&lt;String&gt; discriminators,
+            Map&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; exampleEntity) {
+<span class="fc" id="L90">        final Vertex vertex = graph.addVertex(null);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        for (final String discriminator : discriminators) {</span>
+<span class="fc" id="L92">            vertex.setProperty(getDiscriminatorPropertyKey(discriminator), discriminator);</span>
+<span class="fc" id="L93">        }</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        for (Map.Entry&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; entry : exampleEntity.entrySet()) {</span>
+<span class="fc" id="L95">            setProperty(vertex, entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L96">        }</span>
+<span class="fc" id="L97">        return vertex;</span>
+    }
+
+    @Override
+    public void deleteEntity(Vertex entity) {
+<span class="nc" id="L102">        entity.remove();</span>
+<span class="nc" id="L103">    }</span>
+
+    @Override
+    public ResultIterator&lt;Vertex&gt; findEntity(EntityTypeMetadata&lt;VertexMetadata&gt; entityTypeMetadata, String discriminator,
+            Map&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; values) {
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (values.size() &gt; 1) {</span>
+<span class="nc" id="L109">            throw new XOException(&quot;Only one property value is supported for find operation&quot;);</span>
+        }
+<span class="fc" id="L111">        Map.Entry&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; entry = values.entrySet().iterator().next();</span>
+<span class="fc" id="L112">        PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; propertyMethodMetadata = entry.getKey();</span>
+<span class="fc" id="L113">        PropertyMetadata propertyMetadata = propertyMethodMetadata.getDatastoreMetadata();</span>
+<span class="fc" id="L114">        Object value = entry.getValue();</span>
+
+<span class="fc" id="L116">        GraphQuery query = graph.query();</span>
+<span class="fc" id="L117">        query = query.has(getDiscriminatorPropertyKey(discriminator));</span>
+<span class="fc" id="L118">        query = query.has(propertyMethodMetadata.getDatastoreMetadata().getName(), value);</span>
+<span class="fc" id="L119">        final Iterable&lt;Vertex&gt; vertices = query.vertices();</span>
+<span class="fc" id="L120">        final Iterator&lt;Vertex&gt; iterator = vertices.iterator();</span>
+
+<span class="fc" id="L122">        return new ResultIterator&lt;Vertex&gt;() {</span>
+
+            @Override
+            public boolean hasNext() {
+<span class="fc" id="L126">                return iterator.hasNext();</span>
+            }
+
+            @Override
+            public Vertex next() {
+<span class="fc" id="L131">                return iterator.next();</span>
+            }
+
+            @Override
+            public void remove() {
+<span class="nc" id="L136">                throw new XOException(&quot;Remove operation is not supported for find results.&quot;);</span>
+            }
+
+            @Override
+            public void close() {
+                // intentionally left blank
+<span class="fc" id="L142">            }</span>
+        };
+    }
+
+    @Override
+    public void migrateEntity(Vertex entity, TypeMetadataSet&lt;EntityTypeMetadata&lt;VertexMetadata&gt;&gt; types, Set&lt;String&gt; discriminators,
+            TypeMetadataSet&lt;EntityTypeMetadata&lt;VertexMetadata&gt;&gt; targetTypes, Set&lt;String&gt; targetDiscriminators) {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        for (final String discriminator : discriminators) {</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (!targetDiscriminators.contains(discriminator)) {</span>
+<span class="fc" id="L151">                entity.removeProperty(getDiscriminatorPropertyKey(discriminator));</span>
+            }
+<span class="fc" id="L153">        }</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        for (final String discriminator : targetDiscriminators) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            if (!discriminators.contains(discriminator)) {</span>
+<span class="fc" id="L156">                entity.setProperty(getDiscriminatorPropertyKey(discriminator), discriminator);</span>
+            }
+<span class="fc" id="L158">        }</span>
+<span class="fc" id="L159">    }</span>
+
+    @Override
+    public void flushEntity(Vertex entity) {
+        // intentionally left empty
+<span class="fc" id="L164">    }</span>
+
+    /**
+     * Returns the property key of the given entity discriminator.
+     *
+     * @param discriminator
+     * @return the property key
+     */
+    public static String getDiscriminatorPropertyKey(String discriminator) {
+<span class="fc" id="L173">        return XO_DISCRIMINATORS_PROPERTY + discriminator;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

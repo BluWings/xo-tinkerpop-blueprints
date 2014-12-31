@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TinkerPopEdgeManager.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eXtended Objects - TinkerPop Blueprints Binding</a> &gt; <a href="index.source.html" class="el_package">com.smbtec.xo.tinkerpop.blueprints.impl</a> &gt; <span class="el_source">TinkerPopEdgeManager.java</span></div><h1>TinkerPopEdgeManager.java</h1><pre class="source lang-java linenums">/*
+ * eXtended Objects - Tinkerpop Blueprints Binding
+ *
+ * Copyright (C) 2014 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.smbtec.xo.tinkerpop.blueprints.impl;
+
+import java.util.Iterator;
+import java.util.Map;
+
+import com.buschmais.xo.api.XOException;
+import com.buschmais.xo.spi.datastore.DatastoreRelationManager;
+import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
+import com.buschmais.xo.spi.metadata.type.RelationTypeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.VertexQuery;
+
+/**
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ *
+ */
+public class TinkerPopEdgeManager extends AbstractTinkerPopPropertyManager&lt;Edge&gt; implements
+        DatastoreRelationManager&lt;Vertex, Object, Edge, EdgeMetadata, String, PropertyMetadata&gt; {
+
+    private final Graph graph;
+
+<span class="fc" id="L46">    public TinkerPopEdgeManager(Graph graph) {</span>
+<span class="fc" id="L47">        this.graph = graph;</span>
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    public boolean isRelation(Object o) {
+<span class="fc" id="L52">        return Edge.class.isAssignableFrom(o.getClass());</span>
+    }
+
+    @Override
+    public String getRelationDiscriminator(Edge relation) {
+<span class="fc" id="L57">        return relation.getLabel();</span>
+    }
+
+    @Override
+    public Edge createRelation(Vertex source, RelationTypeMetadata&lt;EdgeMetadata&gt; metadata,
+            com.buschmais.xo.spi.metadata.type.RelationTypeMetadata.Direction direction, Vertex target,
+            Map&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; exampleEntity) {
+<span class="fc" id="L64">        final String name = metadata.getDatastoreMetadata().getDiscriminator();</span>
+        Edge edge;
+<span class="pc bpc" id="L66" title="1 of 3 branches missed.">        switch (direction) {</span>
+        case FROM:
+<span class="fc" id="L68">            edge = source.addEdge(name, target);</span>
+<span class="fc" id="L69">            break;</span>
+        case TO:
+<span class="fc" id="L71">            edge = target.addEdge(name, source);</span>
+<span class="fc" id="L72">            break;</span>
+        default:
+<span class="nc" id="L74">            throw new XOException(&quot;Unknown direction '&quot; + direction.name() + &quot;'.&quot;);</span>
+        }
+<span class="fc" id="L76">        setProperties(edge, exampleEntity);</span>
+<span class="fc" id="L77">        return edge;</span>
+    }
+
+    @Override
+    public void deleteRelation(Edge relation) {
+<span class="fc" id="L82">        relation.remove();</span>
+<span class="fc" id="L83">    }</span>
+
+    @Override
+    public Object getRelationId(Edge relation) {
+<span class="fc" id="L87">        return relation.getId();</span>
+    }
+
+    @Override
+    public Edge findRelationById(RelationTypeMetadata&lt;EdgeMetadata&gt; metadata, Object id) {
+<span class="fc" id="L92">        return graph.getEdge(id);</span>
+    }
+
+    @Override
+    public void flushRelation(Edge relation) {
+        // intentionally left empty
+<span class="fc" id="L98">    }</span>
+
+    @Override
+    public boolean hasSingleRelation(Vertex source, RelationTypeMetadata&lt;EdgeMetadata&gt; metadata,
+            RelationTypeMetadata.Direction direction) {
+<span class="fc" id="L103">        final String label = metadata.getDatastoreMetadata().getDiscriminator();</span>
+        long count;
+<span class="pc bpc" id="L105" title="1 of 3 branches missed.">        switch (direction) {</span>
+        case FROM:
+<span class="fc" id="L107">            count = source.query().direction(Direction.OUT).labels(label).count();</span>
+<span class="fc" id="L108">            break;</span>
+        case TO:
+<span class="fc" id="L110">            count = source.query().direction(Direction.IN).labels(label).count();</span>
+<span class="fc" id="L111">            break;</span>
+        default:
+<span class="nc" id="L113">            throw new XOException(&quot;Unkown direction '&quot; + direction.name() + &quot;'.&quot;);</span>
+        }
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (count &gt; 1) {</span>
+<span class="nc" id="L116">            throw new XOException(&quot;Multiple results are available.&quot;);</span>
+        }
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        return count == 1;</span>
+    }
+
+    @Override
+    public Edge getSingleRelation(Vertex source, RelationTypeMetadata&lt;EdgeMetadata&gt; metadata,
+            RelationTypeMetadata.Direction direction) {
+<span class="fc" id="L124">        final String label = metadata.getDatastoreMetadata().getDiscriminator();</span>
+        Iterable&lt;Edge&gt; edges;
+<span class="pc bpc" id="L126" title="1 of 3 branches missed.">        switch (direction) {</span>
+        case FROM:
+<span class="fc" id="L128">            edges = source.getEdges(Direction.OUT, label);</span>
+<span class="fc" id="L129">            break;</span>
+        case TO:
+<span class="fc" id="L131">            edges = source.getEdges(Direction.IN, label);</span>
+<span class="fc" id="L132">            break;</span>
+        default:
+<span class="nc" id="L134">            throw new XOException(&quot;Unkown direction '&quot; + direction.name() + &quot;'.&quot;);</span>
+        }
+<span class="fc" id="L136">        final Iterator&lt;Edge&gt; iterator = edges.iterator();</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (!iterator.hasNext()) {</span>
+<span class="nc" id="L138">            throw new XOException(&quot;No result is available.&quot;);</span>
+        }
+<span class="fc" id="L140">        final Edge result = iterator.next();</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        if (iterator.hasNext()) {</span>
+<span class="nc" id="L142">            throw new XOException(&quot;Multiple results are available.&quot;);</span>
+        }
+<span class="fc" id="L144">        return result;</span>
+    }
+
+    @Override
+    public Iterable&lt;Edge&gt; getRelations(Vertex source, RelationTypeMetadata&lt;EdgeMetadata&gt; metadata,
+            RelationTypeMetadata.Direction direction) {
+<span class="fc" id="L150">        final String label = metadata.getDatastoreMetadata().getDiscriminator();</span>
+<span class="fc" id="L151">        VertexQuery query = source.query();</span>
+<span class="pc bpc" id="L152" title="1 of 3 branches missed.">        switch (direction) {</span>
+        case TO:
+<span class="fc" id="L154">            query = query.direction(Direction.IN);</span>
+<span class="fc" id="L155">            break;</span>
+        case FROM:
+<span class="fc" id="L157">            query = query.direction(Direction.OUT);</span>
+<span class="fc" id="L158">            break;</span>
+        default:
+<span class="nc" id="L160">            throw new XOException(&quot;Unknown direction '&quot; + direction.name() + &quot;'.&quot;);</span>
+        }
+<span class="fc" id="L162">        return query.labels(label).edges();</span>
+    }
+
+    @Override
+    public Vertex getFrom(final Edge relation) {
+<span class="fc" id="L167">        return relation.getVertex(com.tinkerpop.blueprints.Direction.OUT);</span>
+    }
+
+    @Override
+    public Vertex getTo(final Edge relation) {
+<span class="fc" id="L172">        return relation.getVertex(com.tinkerpop.blueprints.Direction.IN);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

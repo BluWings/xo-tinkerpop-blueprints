@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TinkerPopDatastoreSessionImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eXtended Objects - TinkerPop Blueprints Binding</a> &gt; <a href="index.source.html" class="el_package">com.smbtec.xo.tinkerpop.blueprints.impl</a> &gt; <span class="el_source">TinkerPopDatastoreSessionImpl.java</span></div><h1>TinkerPopDatastoreSessionImpl.java</h1><pre class="source lang-java linenums">/*
+ * eXtended Objects - Tinkerpop Blueprints Binding
+ *
+ * Copyright (C) 2014 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.smbtec.xo.tinkerpop.blueprints.impl;
+
+import java.lang.annotation.Annotation;
+
+import com.buschmais.xo.api.XOException;
+import com.buschmais.xo.spi.datastore.DatastoreEntityManager;
+import com.buschmais.xo.spi.datastore.DatastoreQuery;
+import com.buschmais.xo.spi.datastore.DatastoreRelationManager;
+import com.buschmais.xo.spi.datastore.DatastoreTransaction;
+import com.buschmais.xo.spi.session.XOSession;
+import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
+import com.smbtec.xo.tinkerpop.blueprints.api.annotation.Gremlin;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.TransactionalGraph;
+import com.tinkerpop.blueprints.Vertex;
+
+/**
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ * @author Rick-Rainer Ludwig
+ *
+ */
+public class TinkerPopDatastoreSessionImpl implements TinkerPopDatastoreSession&lt;Graph&gt; {
+
+    private final Graph graph;
+    private final TinkerPopVertexManager vertexManager;
+    private final TinkerPopEdgeManager edgeManager;
+
+<span class="fc" id="L51">    public TinkerPopDatastoreSessionImpl(final Graph graph) {</span>
+<span class="fc" id="L52">        this.graph = graph;</span>
+<span class="fc" id="L53">        this.vertexManager = new TinkerPopVertexManager(graph);</span>
+<span class="fc" id="L54">        this.edgeManager = new TinkerPopEdgeManager(graph);</span>
+
+<span class="fc" id="L56">    }</span>
+
+    @Override
+    public DatastoreTransaction getDatastoreTransaction() {
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (graph.getFeatures().supportsTransactions) {</span>
+<span class="nc" id="L61">            return new TinkerPopTransaction((TransactionalGraph) graph);</span>
+        }
+<span class="fc" id="L63">        return null;</span>
+    }
+
+    @Override
+    public Class&lt;? extends Annotation&gt; getDefaultQueryLanguage() {
+<span class="fc" id="L68">        return Gremlin.class;</span>
+    }
+
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;QL extends Annotation&gt; DatastoreQuery&lt;QL&gt; createQuery(final Class&lt;QL&gt; queryLanguage) {
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (Gremlin.class.equals(queryLanguage)) {</span>
+<span class="fc" id="L75">            return (DatastoreQuery&lt;QL&gt;) new GremlinQuery(this);</span>
+        }
+<span class="nc" id="L77">        throw new XOException(&quot;Unsupported query language: &quot; + queryLanguage.getName());</span>
+    }
+
+    @Override
+    public void close() {
+        // intentionally left blank
+<span class="fc" id="L83">    }</span>
+
+    @Override
+    public Graph getGraph() {
+<span class="fc" id="L87">        return this.graph;</span>
+    }
+
+    @Override
+    public DatastoreEntityManager&lt;Object, Vertex, VertexMetadata, String, PropertyMetadata&gt; getDatastoreEntityManager() {
+<span class="fc" id="L92">        return vertexManager;</span>
+    }
+
+    @Override
+    public DatastoreRelationManager&lt;Vertex, Object, Edge, EdgeMetadata, String, PropertyMetadata&gt; getDatastoreRelationManager() {
+<span class="fc" id="L97">        return edgeManager;</span>
+    }
+
+    @Override
+    public &lt;R&gt; R createRepository(XOSession xoSession, Class&lt;R&gt; type) {
+<span class="fc" id="L102">        return (R) new TinkerPopRepositoryImpl(graph, xoSession);</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -1,0 +1,23 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl.metadata,PropertyMetadata,0,25,0,0,0,10,0,5,0,5
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl.metadata,EdgeMetadata,0,9,0,0,0,4,0,2,0,2
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl.metadata,CollectionPropertyMetadata,6,9,0,0,2,4,2,1,2,1
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl.metadata,ReferencePropertyMetadata,6,9,0,0,2,4,2,1,2,1
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl.metadata,IndexedPropertyMetadata,27,0,0,0,10,0,5,0,5,0
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl.metadata,VertexMetadata,0,9,0,0,0,4,0,2,0,2
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopRepositoryImpl.EdgeResultIterator,16,0,0,0,6,0,4,0,4,0
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,GremlinQuery.SimpleResultIterator,5,25,0,0,1,8,1,4,1,4
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopRepositoryImpl.VertexResultIterator,0,16,0,0,0,6,0,4,0,4
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopVertexManager,13,197,2,18,4,44,3,18,1,10
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,GremlinQuery.IterableResultIterator,5,22,0,0,1,6,1,4,1,4
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopDatastore,0,123,1,11,0,27,1,12,0,7
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,GremlinQuery,123,148,15,21,25,37,12,13,0,7
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopTransaction,45,0,4,0,17,0,7,0,5,0
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopDatastoreSessionImpl,20,54,2,2,2,15,2,9,0,9
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopEdgeManager,75,192,7,13,7,47,7,18,0,13
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopMetadataFactory,29,210,8,24,4,51,7,20,0,11
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopVertexManager.new ResultIterator() {...},5,19,0,0,1,4,1,4,1,4
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,AbstractTinkerPopPropertyManager,0,62,1,5,0,13,1,8,0,6
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopEdgeManager.new Object() {...},2,17,0,0,0,1,0,1,0,1
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.impl,TinkerPopRepositoryImpl,15,75,0,0,3,18,1,4,1,4
+eXtended Objects - TinkerPop Blueprints Binding,com.smbtec.xo.tinkerpop.blueprints.api,TinkerPopXOProvider,5,14,1,1,1,3,1,2,0,2

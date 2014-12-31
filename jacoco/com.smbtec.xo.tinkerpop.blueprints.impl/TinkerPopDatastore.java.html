@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TinkerPopDatastore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eXtended Objects - TinkerPop Blueprints Binding</a> &gt; <a href="index.source.html" class="el_package">com.smbtec.xo.tinkerpop.blueprints.impl</a> &gt; <span class="el_source">TinkerPopDatastore.java</span></div><h1>TinkerPopDatastore.java</h1><pre class="source lang-java linenums">/*
+ * eXtended Objects - Tinkerpop Blueprints Binding
+ *
+ * Copyright (C) 2014 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.smbtec.xo.tinkerpop.blueprints.impl;
+
+import java.util.Map;
+
+import org.apache.commons.configuration.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.xo.spi.datastore.Datastore;
+import com.buschmais.xo.spi.datastore.DatastoreMetadataFactory;
+import com.buschmais.xo.spi.metadata.method.MethodMetadata;
+import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
+import com.buschmais.xo.spi.metadata.type.EntityTypeMetadata;
+import com.buschmais.xo.spi.metadata.type.TypeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopDatastoreSession;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.GraphFactory;
+import com.tinkerpop.blueprints.KeyIndexableGraph;
+import com.tinkerpop.blueprints.Parameter;
+
+/**
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ * @author Rick-Rainer Ludwig
+ *
+ */
+public class TinkerPopDatastore implements Datastore&lt;TinkerPopDatastoreSession&lt;Graph&gt;, VertexMetadata, String, EdgeMetadata, String&gt; {
+
+<span class="fc" id="L51">    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerPopDatastore.class);</span>
+
+    private Graph graph;
+
+<span class="fc" id="L55">    public TinkerPopDatastore(final Configuration config) {</span>
+<span class="fc" id="L56">        graph = GraphFactory.open(config);</span>
+<span class="fc" id="L57">    }</span>
+
+    @Override
+    public void init(Map&lt;Class&lt;?&gt;, TypeMetadata&gt; registeredMetadata) {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (TypeMetadata typeMetadata : registeredMetadata.values()) {</span>
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">            if (typeMetadata instanceof EntityTypeMetadata &amp;&amp; graph.getFeatures().supportsKeyIndices) {</span>
+                @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L64">                EntityTypeMetadata&lt;VertexMetadata&gt; entityTypeMetadata = (EntityTypeMetadata&lt;VertexMetadata&gt;) typeMetadata;</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                for (MethodMetadata&lt;?, ?&gt; methodMetadata : entityTypeMetadata.getProperties()) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                    if (methodMetadata instanceof PrimitivePropertyMethodMetadata&lt;?&gt;) {</span>
+                        @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L68">                        PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; propertyMetadata = (PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;) methodMetadata;</span>
+<span class="fc" id="L69">                        ensureIndex(entityTypeMetadata.getDatastoreMetadata().getDiscriminator(), propertyMetadata);</span>
+                    }
+<span class="fc" id="L71">                }</span>
+            }
+<span class="fc" id="L73">        }</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public DatastoreMetadataFactory&lt;VertexMetadata, String, EdgeMetadata, String&gt; getMetadataFactory() {
+<span class="fc" id="L78">        return new TinkerPopMetadataFactory();</span>
+    }
+
+    @Override
+    public TinkerPopDatastoreSession&lt;Graph&gt; createSession() {
+<span class="fc" id="L83">        return new TinkerPopDatastoreSessionImpl(graph);</span>
+    }
+
+    @Override
+    public void close() {
+<span class="fc" id="L88">        graph.shutdown();</span>
+<span class="fc" id="L89">        graph = null;</span>
+<span class="fc" id="L90">    }</span>
+
+    private void ensureIndex(String discriminator, PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; propertyMetadata) {
+<span class="fc" id="L93">        PropertyMetadata datastoreMetadata = propertyMetadata.getDatastoreMetadata();</span>
+<span class="fc" id="L94">        Class&lt;? extends Element&gt; elementType = datastoreMetadata.getElementType();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (elementType != null) {</span>
+<span class="fc" id="L96">            String propertyName = datastoreMetadata.getName();</span>
+<span class="fc" id="L97">            Parameter&lt;String, String&gt;[] parameters = datastoreMetadata.getParameters();</span>
+<span class="fc" id="L98">            LOGGER.info(&quot;Creating key index for type {}({}) on property '{}' with parameters {}.&quot;, elementType.getSimpleName(),</span>
+                    discriminator, propertyName, parameters);
+<span class="fc" id="L100">            ((KeyIndexableGraph) graph).createKeyIndex(propertyName, elementType, parameters);</span>
+        }
+<span class="fc" id="L102">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

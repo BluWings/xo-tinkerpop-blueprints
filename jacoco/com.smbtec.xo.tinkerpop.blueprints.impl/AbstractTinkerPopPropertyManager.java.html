@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractTinkerPopPropertyManager.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eXtended Objects - TinkerPop Blueprints Binding</a> &gt; <a href="index.source.html" class="el_package">com.smbtec.xo.tinkerpop.blueprints.impl</a> &gt; <span class="el_source">AbstractTinkerPopPropertyManager.java</span></div><h1>AbstractTinkerPopPropertyManager.java</h1><pre class="source lang-java linenums">/*
+ * eXtended Objects - Tinkerpop Blueprints Binding
+ *
+ * Copyright (C) 2014 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.smbtec.xo.tinkerpop.blueprints.impl;
+
+import java.util.Map;
+
+import com.buschmais.xo.spi.datastore.DatastorePropertyManager;
+import com.buschmais.xo.spi.metadata.method.PrimitivePropertyMethodMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.PropertyMetadata;
+import com.tinkerpop.blueprints.Element;
+
+/**
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ *
+ * @param &lt;E&gt;
+ */
+<span class="fc" id="L34">public class AbstractTinkerPopPropertyManager&lt;E extends Element&gt; implements DatastorePropertyManager&lt;E, PropertyMetadata&gt; {</span>
+
+    @Override
+    public void setProperty(E element, PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; metadata, Object value) {
+<span class="fc" id="L38">        element.setProperty(metadata.getDatastoreMetadata().getName(), value);</span>
+<span class="fc" id="L39">    }</span>
+
+    @Override
+    public boolean hasProperty(E element, PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; metadata) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        return element.getProperty(metadata.getDatastoreMetadata().getName()) != null;</span>
+    }
+
+    @Override
+    public void removeProperty(E element, PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; metadata) {
+<span class="fc" id="L48">        element.removeProperty(metadata.getDatastoreMetadata().getName());</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public Object getProperty(E element, PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt; metadata) {
+<span class="fc" id="L53">        return element.getProperty(metadata.getDatastoreMetadata().getName());</span>
+    }
+
+    protected void setProperties(E element, Map&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; example) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for (Map.Entry&lt;PrimitivePropertyMethodMetadata&lt;PropertyMetadata&gt;, Object&gt; entry : example.entrySet()) {</span>
+<span class="fc" id="L58">            Object value = entry.getValue();</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (value != null) {</span>
+<span class="fc" id="L60">                setProperty(element, entry.getKey(), value);</span>
+            }
+<span class="fc" id="L62">        }</span>
+<span class="fc" id="L63">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

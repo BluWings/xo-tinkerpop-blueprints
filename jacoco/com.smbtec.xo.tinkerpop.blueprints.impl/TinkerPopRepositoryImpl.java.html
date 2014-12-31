@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TinkerPopRepositoryImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eXtended Objects - TinkerPop Blueprints Binding</a> &gt; <a href="index.source.html" class="el_package">com.smbtec.xo.tinkerpop.blueprints.impl</a> &gt; <span class="el_source">TinkerPopRepositoryImpl.java</span></div><h1>TinkerPopRepositoryImpl.java</h1><pre class="source lang-java linenums">/*
+ * eXtended Objects - Tinkerpop Blueprints Binding
+ *
+ * Copyright (C) 2014 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.smbtec.xo.tinkerpop.blueprints.impl;
+
+import java.util.Iterator;
+
+import com.buschmais.xo.api.ResultIterable;
+import com.buschmais.xo.api.ResultIterator;
+import com.buschmais.xo.spi.metadata.type.EntityTypeMetadata;
+import com.buschmais.xo.spi.session.XOSession;
+import com.google.common.collect.Iterables;
+import com.smbtec.xo.tinkerpop.blueprints.api.TinkerPopRepository;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.EdgeMetadata;
+import com.smbtec.xo.tinkerpop.blueprints.impl.metadata.VertexMetadata;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
+
+/**
+ * Implementation of {@link TinkerPopRepository}.
+ *
+ * @author Lars Martin - lars.martin@smb-tec.com
+ */
+public class TinkerPopRepositoryImpl implements TinkerPopRepository {
+
+    private XOSession&lt;?, ?, VertexMetadata, ?, ?, ?, ?, EdgeMetadata, ?&gt; xoSession;
+
+    private Graph graph;
+
+<span class="fc" id="L46">    public TinkerPopRepositoryImpl(Graph graph, XOSession&lt;?, ?, VertexMetadata, ?, ?, ?, ?, EdgeMetadata, ?&gt; xoSession) {</span>
+<span class="fc" id="L47">        this.graph = graph;</span>
+<span class="fc" id="L48">        this.xoSession = xoSession;</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public &lt;T&gt; ResultIterable&lt;T&gt; findAll(Class&lt;T&gt; type) {
+<span class="fc" id="L53">        EntityTypeMetadata&lt;VertexMetadata&gt; entityTypeMetadata = xoSession.getEntityMetadata(type);</span>
+<span class="fc" id="L54">        String label = entityTypeMetadata.getDatastoreMetadata().getDiscriminator();</span>
+<span class="fc" id="L55">        Iterable&lt;Vertex&gt; vertices = graph.query().has(TinkerPopVertexManager.getDiscriminatorPropertyKey(label))</span>
+<span class="fc" id="L56">                .vertices();</span>
+<span class="fc" id="L57">        final Iterator&lt;Vertex&gt; iterator = vertices.iterator();</span>
+<span class="fc" id="L58">        return xoSession.toResult(new VertexResultIterator(iterator));</span>
+    }
+
+    @Override
+    public &lt;T&gt; long count(Class&lt;T&gt; type) {
+<span class="fc" id="L63">        EntityTypeMetadata&lt;VertexMetadata&gt; entityTypeMetadata = xoSession.getEntityMetadata(type);</span>
+<span class="fc" id="L64">        String label = entityTypeMetadata.getDatastoreMetadata().getDiscriminator();</span>
+<span class="fc" id="L65">        Iterable&lt;Vertex&gt; vertices = graph.query().has(TinkerPopVertexManager.getDiscriminatorPropertyKey(label))</span>
+<span class="fc" id="L66">                .vertices();</span>
+<span class="fc" id="L67">        return Iterables.size(vertices);</span>
+    }
+
+    @Override
+    public ResultIterable&lt;?&gt; vertices() {
+<span class="fc" id="L72">        Iterable&lt;Vertex&gt; vertices = graph.getVertices();</span>
+<span class="fc" id="L73">        Iterator&lt;Vertex&gt; iterator = vertices.iterator();</span>
+<span class="fc" id="L74">        return xoSession.toResult(new VertexResultIterator(iterator));</span>
+    }
+
+    @Override
+    public ResultIterable&lt;?&gt; edges() {
+<span class="nc" id="L79">        Iterable&lt;Edge&gt; edges = graph.getEdges();</span>
+<span class="nc" id="L80">        Iterator&lt;Edge&gt; iterator = edges.iterator();</span>
+<span class="nc" id="L81">        return xoSession.toResult(new EdgeResultIterator(iterator));</span>
+    }
+
+    private static class VertexResultIterator implements ResultIterator&lt;Vertex&gt; {
+
+        private Iterator&lt;Vertex&gt; iterator;
+
+<span class="fc" id="L88">        public VertexResultIterator(Iterator&lt;Vertex&gt; iterator) {</span>
+<span class="fc" id="L89">            this.iterator = iterator;</span>
+<span class="fc" id="L90">        }</span>
+
+        @Override
+        public boolean hasNext() {
+<span class="fc" id="L94">            return iterator.hasNext();</span>
+        }
+
+        @Override
+        public Vertex next() {
+<span class="fc" id="L99">            return iterator.next();</span>
+        }
+
+        @Override
+        public void close() {
+            // intentionally left blank
+<span class="fc" id="L105">        }</span>
+    }
+
+    private static class EdgeResultIterator implements ResultIterator&lt;Edge&gt; {
+
+        private Iterator&lt;Edge&gt; iterator;
+
+<span class="nc" id="L112">        public EdgeResultIterator(Iterator&lt;Edge&gt; iterator) {</span>
+<span class="nc" id="L113">            this.iterator = iterator;</span>
+<span class="nc" id="L114">        }</span>
+
+        @Override
+        public boolean hasNext() {
+<span class="nc" id="L118">            return iterator.hasNext();</span>
+        }
+
+        @Override
+        public Edge next() {
+<span class="nc" id="L123">            return iterator.next();</span>
+        }
+
+        @Override
+        public void close() {
+            // intentionally left blank
+<span class="nc" id="L129">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
